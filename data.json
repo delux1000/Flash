@@ -1,0 +1,715 @@
+{
+  "chainId": "0x1",
+  "networkId": "1",
+  "totalUSD": "500000000000",
+  "accounts": {
+    "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266": {
+      "nonce": 0,
+      "balance": "1000000000000000000000000",
+      "tokens": {
+        "0xdac17f958d2ee523a2206206994597c13d831ec7": "500000000000000000",
+        "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": "100000000000000000",
+        "0x6b175474e89094c44da98b954eedeac495271d0f": "500000000000000000000000",
+        "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2": "50000000000000000000",
+        "0x514910771af9ca656af840dff83e8264ecf986ca": "100000000000000000000000",
+        "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984": "100000000000000000000000",
+        "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9": "20000000000000000000000",
+        "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0": "1000000000000000000000000",
+        "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce": "5000000000000000000000000000",
+        "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599": "100000000000",
+        "0xba100000625a3754423978a60c9317c58a424e3d": "1000000000000000000000000",
+        "0x0bc529c00c6401aef6d220be8c6ea1667f6ad93e": "50000000000000000000",
+        "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2": "10000000000000000000000",
+        "0x": "1000000000000000",
+        "0x68e3df274e7d0beee71f0da49bf23526fc89aae0": "1000000000000000"
+      }
+    }
+  },
+  "contracts": {
+    "0xdac17f958d2ee523a2206206994597c13d831ec7": {
+      "symbol": "USDT",
+      "name": "Tether USD",
+      "decimals": 6,
+      "totalSupply": "83200000000000000",
+      "metadata": {
+        "address": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+        "name": "Tether USD",
+        "symbol": "USDT",
+        "decimals": 6,
+        "chainId": 1,
+        "logoURI": "https://tokens.1inch.io/0xdac17f958d2ee523a2206206994597c13d831ec7.png",
+        "logoURIs": {
+          "small": "https://assets.coingecko.com/coins/images/325/small/Tether.png",
+          "large": "https://assets.coingecko.com/coins/images/325/large/Tether.png"
+        },
+        "tags": [
+          "stablecoin",
+          "peg:usd",
+          "popular",
+          "defi"
+        ],
+        "website": "https://tether.to",
+        "whitepaper": "https://tether.to/wp-content/uploads/2016/06/TetherWhitePaper.pdf",
+        "explorer": "https://etherscan.io/token/0xdac17f958d2ee523a2206206994597c13d831ec7",
+        "github": "https://github.com/tether",
+        "twitter": "https://twitter.com/Tether_to",
+        "telegram": "https://t.me/tether_to",
+        "discord": "https://discord.gg/tether",
+        "reddit": "https://reddit.com/r/tether",
+        "medium": "https://medium.com/tether",
+        "coingeckoId": "tether",
+        "coinmarketcapId": "tether",
+        "description": "Tether (USDT) is a stablecoin pegged to the US dollar. It is the most widely used stablecoin in the cryptocurrency ecosystem, providing stability and liquidity for traders and investors.",
+        "totalSupply": 83200000000,
+        "circulatingSupply": 83200000000,
+        "maxSupply": null,
+        "marketCap": 83200000000,
+        "volume24h": 50000000000,
+        "allTimeHigh": 1.22,
+        "allTimeLow": 0.57,
+        "launchDate": "2014-10-06",
+        "audits": [
+          {
+            "auditor": "Moore Cayman",
+            "date": "2024-01-31",
+            "report": "https://tether.to/wp-content/uploads/2024/02/Tether_Consolidated_Reserves_Report_January_2024.pdf"
+          }
+        ],
+        "issuer": "Tether Limited",
+        "issuerCountry": "British Virgin Islands",
+        "regulation": "Not regulated as a security",
+        "pegMechanism": "Fiat-backed",
+        "reserves": "Cash, cash equivalents, and other assets",
+        "reservesBreakdown": {
+          "cashAndBankDeposits": "15%",
+          "treasuryBills": "60%",
+          "moneyMarketFunds": "15%",
+          "otherInvestments": "10%"
+        },
+        "contracts": {
+          "ethereum": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+          "tron": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+          "bsc": "0x55d398326f99059ff775485246999027b3197955",
+          "polygon": "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
+          "avalanche": "0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7",
+          "arbitrum": "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
+          "optimism": "0x94b008aa00579c1307b0ef2c499ad98a8ce58e58",
+          "fantom": "0x049d68029688eabf473097a2fc38ef61633a3c7a"
+        }
+      }
+    },
+    "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": {
+      "symbol": "USDC",
+      "name": "USD Coin",
+      "decimals": 6,
+      "totalSupply": "32000000000000000",
+      "metadata": {
+        "address": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "name": "USD Coin",
+        "symbol": "USDC",
+        "decimals": 6,
+        "chainId": 1,
+        "logoURI": "https://tokens.1inch.io/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png",
+        "logoURIs": {
+          "small": "https://assets.coingecko.com/coins/images/6319/small/USD_Coin_icon.png",
+          "large": "https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png"
+        },
+        "tags": [
+          "stablecoin",
+          "peg:usd",
+          "popular",
+          "defi",
+          "regulated"
+        ],
+        "website": "https://www.centre.io/usdc",
+        "whitepaper": "https://www.centre.io/pdfs/centre-whitepaper.pdf",
+        "explorer": "https://etherscan.io/token/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "github": "https://github.com/centrehq",
+        "twitter": "https://twitter.com/centre_io",
+        "discord": "https://discord.gg/usdc",
+        "coingeckoId": "usd-coin",
+        "coinmarketcapId": "usd-coin",
+        "description": "USD Coin (USDC) is a fully reserved stablecoin pegged to the US dollar. It is regulated and backed by Circle, with monthly attestations of reserves.",
+        "totalSupply": 32000000000,
+        "circulatingSupply": 32000000000,
+        "maxSupply": null,
+        "marketCap": 32000000000,
+        "volume24h": 30000000000,
+        "allTimeHigh": 1.19,
+        "allTimeLow": 0.89,
+        "launchDate": "2018-09-20",
+        "audits": [
+          {
+            "auditor": "Grant Thornton",
+            "date": "2024-02-29",
+            "report": "https://www.circle.com/hubfs/Attestation-Reports/Circle_Attestation_Report_Feb2024.pdf"
+          }
+        ],
+        "issuer": "Circle",
+        "issuerCountry": "USA",
+        "regulation": "Regulated by FinCEN as a money transmitter",
+        "pegMechanism": "Fiat-backed",
+        "reserves": "Cash and US Treasury bonds",
+        "reservesBreakdown": {
+          "cash": "20%",
+          "treasuryBills": "80%"
+        }
+      }
+    },
+    "0x6b175474e89094c44da98b954eedeac495271d0f": {
+      "symbol": "DAI",
+      "name": "Dai Stablecoin",
+      "decimals": 18,
+      "totalSupply": "5000000000000000000000000000",
+      "metadata": {
+        "address": "0x6b175474e89094c44da98b954eedeac495271d0f",
+        "name": "Dai Stablecoin",
+        "symbol": "DAI",
+        "decimals": 18,
+        "chainId": 1,
+        "logoURI": "https://tokens.1inch.io/0x6b175474e89094c44da98b954eedeac495271d0f.png",
+        "logoURIs": {
+          "small": "https://assets.coingecko.com/coins/images/9956/small/dai-multi-collateral.png",
+          "large": "https://assets.coingecko.com/coins/images/9956/large/dai-multi-collateral.png"
+        },
+        "tags": [
+          "stablecoin",
+          "defi",
+          "peg:usd",
+          "decentralized"
+        ],
+        "website": "https://makerdao.com",
+        "whitepaper": "https://makerdao.com/whitepaper",
+        "explorer": "https://etherscan.io/token/0x6b175474e89094c44da98b954eedeac495271d0f",
+        "github": "https://github.com/makerdao",
+        "twitter": "https://twitter.com/MakerDAO",
+        "reddit": "https://reddit.com/r/makerdao",
+        "discord": "https://discord.gg/makerdao",
+        "coingeckoId": "dai",
+        "coinmarketcapId": "multi-collateral-dai",
+        "description": "Dai (DAI) is a decentralized stablecoin backed by collateral on the Maker protocol. It maintains its peg through a system of collateralized debt positions and economic incentives.",
+        "totalSupply": 5000000000,
+        "circulatingSupply": 5000000000,
+        "maxSupply": null,
+        "marketCap": 5000000000,
+        "volume24h": 1000000000,
+        "allTimeHigh": 1.22,
+        "allTimeLow": 0.89,
+        "launchDate": "2017-12-27",
+        "audits": [
+          {
+            "auditor": "Trail of Bits",
+            "date": "2023-08-15",
+            "report": "https://github.com/makerdao/audits/blob/master/2023-08-15_TrailOfBits.pdf"
+          }
+        ],
+        "issuer": "MakerDAO",
+        "issuerCountry": "Decentralized",
+        "regulation": "Not regulated",
+        "pegMechanism": "Collateral-backed",
+        "collateral": [
+          "ETH",
+          "USDC",
+          "WBTC",
+          "stETH"
+        ],
+        "collateralizationRatio": "150%"
+      }
+    },
+    "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2": {
+      "symbol": "WETH",
+      "name": "Wrapped Ether",
+      "decimals": 18,
+      "totalSupply": "3000000000000000000000000",
+      "metadata": {
+        "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        "name": "Wrapped Ether",
+        "symbol": "WETH",
+        "decimals": 18,
+        "chainId": 1,
+        "logoURI": "https://tokens.1inch.io/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png",
+        "logoURIs": {
+          "small": "https://assets.coingecko.com/coins/images/2518/small/weth.png",
+          "large": "https://assets.coingecko.com/coins/images/2518/large/weth.png"
+        },
+        "tags": [
+          "wrapped",
+          "defi",
+          "liquidity"
+        ],
+        "website": "https://weth.io",
+        "explorer": "https://etherscan.io/token/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        "github": "https://github.com/gnosis/weth",
+        "twitter": "https://twitter.com/weth_io",
+        "coingeckoId": "weth",
+        "coinmarketcapId": "weth",
+        "description": "Wrapped Ether (WETH) is ERC-20 compatible version of ETH, allowing ETH to be used in DeFi applications, smart contracts, and as a tradable token.",
+        "totalSupply": 3000000,
+        "circulatingSupply": 3000000,
+        "maxSupply": null,
+        "marketCap": 9000000000,
+        "volume24h": 500000000,
+        "launchDate": "2017-08-31"
+      }
+    },
+    "0x514910771af9ca656af840dff83e8264ecf986ca": {
+      "symbol": "LINK",
+      "name": "Chainlink",
+      "decimals": 18,
+      "totalSupply": "1000000000000000000000000000",
+      "metadata": {
+        "address": "0x514910771af9ca656af840dff83e8264ecf986ca",
+        "name": "Chainlink",
+        "symbol": "LINK",
+        "decimals": 18,
+        "chainId": 1,
+        "logoURI": "https://tokens.1inch.io/0x514910771af9ca656af840dff83e8264ecf986ca.png",
+        "logoURIs": {
+          "small": "https://assets.coingecko.com/coins/images/877/small/chainlink-new-logo.png",
+          "large": "https://assets.coingecko.com/coins/images/877/large/chainlink-new-logo.png"
+        },
+        "tags": [
+          "oracle",
+          "defi",
+          "infrastructure"
+        ],
+        "website": "https://chain.link",
+        "whitepaper": "https://chain.link/whitepaper",
+        "explorer": "https://etherscan.io/token/0x514910771af9ca656af840dff83e8264ecf986ca",
+        "github": "https://github.com/smartcontractkit/chainlink",
+        "twitter": "https://twitter.com/chainlink",
+        "telegram": "https://t.me/chainlinkofficial",
+        "discord": "https://discord.gg/chainlink",
+        "reddit": "https://reddit.com/r/chainlink",
+        "coingeckoId": "chainlink",
+        "coinmarketcapId": "chainlink",
+        "description": "Chainlink (LINK) is a decentralized oracle network that provides real-world data to smart contracts on the blockchain. It enables hybrid smart contracts that combine on-chain code with off-chain data.",
+        "totalSupply": 1000000000,
+        "circulatingSupply": 600000000,
+        "maxSupply": 1000000000,
+        "marketCap": 15000000000,
+        "volume24h": 500000000,
+        "allTimeHigh": 52.88,
+        "allTimeLow": 0.15,
+        "launchDate": "2017-09-21",
+        "audits": [
+          {
+            "auditor": "Trail of Bits",
+            "date": "2023-06-30",
+            "report": "https://github.com/smartcontractkit/audits"
+          }
+        ]
+      }
+    },
+    "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984": {
+      "symbol": "UNI",
+      "name": "Uniswap",
+      "decimals": 18,
+      "totalSupply": "1000000000000000000000000000",
+      "metadata": {
+        "address": "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+        "name": "Uniswap",
+        "symbol": "UNI",
+        "decimals": 18,
+        "chainId": 1,
+        "logoURI": "https://tokens.1inch.io/0x1f9840a85d5af5bf1d1762f925bdaddc4201f984.png",
+        "website": "https://uniswap.org",
+        "twitter": "https://twitter.com/Uniswap",
+        "coingeckoId": "uniswap",
+        "description": "Uniswap (UNI) is the governance token for the Uniswap protocol, a leading decentralized exchange."
+      }
+    },
+    "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9": {
+      "symbol": "AAVE",
+      "name": "Aave",
+      "decimals": 18,
+      "totalSupply": "16000000000000000000000000",
+      "metadata": {
+        "address": "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9",
+        "name": "Aave",
+        "symbol": "AAVE",
+        "decimals": 18,
+        "chainId": 1,
+        "logoURI": "https://tokens.1inch.io/0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9.png",
+        "logoURIs": {
+          "small": "https://assets.coingecko.com/coins/images/12645/small/AAVE.png",
+          "large": "https://assets.coingecko.com/coins/images/12645/large/AAVE.png"
+        },
+        "tags": [
+          "lending",
+          "defi",
+          "governance"
+        ],
+        "website": "https://aave.com",
+        "whitepaper": "https://github.com/aave/aave-v3-core/blob/master/techpaper/Aave_V3_Technical_Paper.pdf",
+        "explorer": "https://etherscan.io/token/0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9",
+        "github": "https://github.com/aave",
+        "twitter": "https://twitter.com/aave",
+        "discord": "https://discord.gg/aave",
+        "telegram": "https://t.me/Aavesome",
+        "coingeckoId": "aave",
+        "coinmarketcapId": "aave",
+        "description": "Aave (AAVE) is a decentralized lending protocol that allows users to lend, borrow, and earn interest on crypto assets. AAVE token holders can participate in protocol governance.",
+        "totalSupply": 16000000,
+        "circulatingSupply": 15000000,
+        "maxSupply": 16000000,
+        "marketCap": 1500000000,
+        "volume24h": 100000000,
+        "allTimeHigh": 661.69,
+        "allTimeLow": 26.02,
+        "launchDate": "2020-10-02"
+      }
+    },
+    "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0": {
+      "symbol": "MATIC",
+      "name": "Polygon",
+      "decimals": 18,
+      "totalSupply": "10000000000000000000000000000",
+      "metadata": {
+        "address": "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0",
+        "name": "Polygon",
+        "symbol": "MATIC",
+        "decimals": 18,
+        "chainId": 1,
+        "logoURI": "https://tokens.1inch.io/0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0.png",
+        "logoURIs": {
+          "small": "https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png",
+          "large": "https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png"
+        },
+        "tags": [
+          "layer2",
+          "scaling",
+          "infrastructure"
+        ],
+        "website": "https://polygon.technology",
+        "whitepaper": "https://polygon.technology/whitepaper",
+        "explorer": "https://etherscan.io/token/0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0",
+        "github": "https://github.com/maticnetwork",
+        "twitter": "https://twitter.com/0xPolygon",
+        "discord": "https://discord.gg/polygon",
+        "telegram": "https://t.me/polygonofficial",
+        "reddit": "https://reddit.com/r/0xPolygon",
+        "coingeckoId": "matic-network",
+        "coinmarketcapId": "polygon",
+        "description": "Polygon (MATIC) is a layer-2 scaling solution for Ethereum that provides faster and cheaper transactions. MATIC is used for governance, staking, and paying fees on the Polygon network.",
+        "totalSupply": 10000000000,
+        "circulatingSupply": 9000000000,
+        "maxSupply": 10000000000,
+        "marketCap": 9000000000,
+        "volume24h": 300000000,
+        "allTimeHigh": 2.92,
+        "allTimeLow": 0.003,
+        "launchDate": "2019-04-24"
+      }
+    },
+    "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce": {
+      "symbol": "SHIB",
+      "name": "Shiba Inu",
+      "decimals": 18,
+      "totalSupply": "1000000000000000000000000000000",
+      "metadata": {
+        "address": "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce",
+        "name": "Shiba Inu",
+        "symbol": "SHIB",
+        "decimals": 18,
+        "chainId": 1,
+        "logoURI": "https://tokens.1inch.io/0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce.png",
+        "logoURIs": {
+          "small": "https://assets.coingecko.com/coins/images/11939/small/shiba.png",
+          "large": "https://assets.coingecko.com/coins/images/11939/large/shiba.png"
+        },
+        "tags": [
+          "meme",
+          "community",
+          "ecosystem"
+        ],
+        "website": "https://shibatoken.com",
+        "explorer": "https://etherscan.io/token/0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce",
+        "twitter": "https://twitter.com/shibtoken",
+        "discord": "https://discord.gg/shibainu",
+        "reddit": "https://reddit.com/r/SHIBArmy",
+        "telegram": "https://t.me/shibainuthedog",
+        "coingeckoId": "shiba-inu",
+        "coinmarketcapId": "shiba-inu",
+        "description": "Shiba Inu (SHIB) is a decentralized meme token that grew into a full ecosystem including ShibaSwap, Shibarium, and the SHIB: The Metaverse project. It's one of the largest community-driven crypto projects.",
+        "totalSupply": 1000000000000000,
+        "circulatingSupply": 589000000000000,
+        "maxSupply": null,
+        "marketCap": 15000000000,
+        "volume24h": 500000000,
+        "allTimeHigh": 0.000088,
+        "allTimeLow": 1e-10,
+        "launchDate": "2020-08-01"
+      }
+    },
+    "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599": {
+      "symbol": "WBTC",
+      "name": "Wrapped Bitcoin",
+      "decimals": 8,
+      "totalSupply": "210000000000",
+      "metadata": {
+        "address": "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
+        "name": "Wrapped Bitcoin",
+        "symbol": "WBTC",
+        "decimals": 8,
+        "chainId": 1,
+        "logoURI": "https://tokens.1inch.io/0x2260fac5e5542a773aa44fbcfedf7c193bc2c599.png",
+        "logoURIs": {
+          "small": "https://assets.coingecko.com/coins/images/7598/small/wrapped_bitcoin_wbtc.png",
+          "large": "https://assets.coingecko.com/coins/images/7598/large/wrapped_bitcoin_wbtc.png"
+        },
+        "tags": [
+          "wrapped",
+          "bitcoin",
+          "defi"
+        ],
+        "website": "https://wbtc.network",
+        "explorer": "https://etherscan.io/token/0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
+        "github": "https://github.com/WrappedBTC",
+        "twitter": "https://twitter.com/WrappedBTC",
+        "coingeckoId": "wrapped-bitcoin",
+        "coinmarketcapId": "wrapped-bitcoin",
+        "description": "Wrapped Bitcoin (WBTC) is an ERC-20 token backed 1:1 with Bitcoin. It brings Bitcoin's liquidity to the Ethereum ecosystem, enabling BTC holders to participate in DeFi applications.",
+        "totalSupply": 150000,
+        "circulatingSupply": 150000,
+        "maxSupply": null,
+        "marketCap": 6000000000,
+        "volume24h": 100000000,
+        "launchDate": "2019-01-31"
+      }
+    },
+    "0xba100000625a3754423978a60c9317c58a424e3d": {
+      "symbol": "BAL",
+      "name": "Balancer",
+      "decimals": 18,
+      "totalSupply": "100000000000000000000000000",
+      "metadata": {
+        "address": "0xba100000625a3754423978a60c9317c58a424e3d",
+        "name": "Balancer",
+        "symbol": "BAL",
+        "decimals": 18,
+        "chainId": 1,
+        "logoURI": "https://tokens.1inch.io/0xba100000625a3754423978a60c9317c58a424e3d.png",
+        "website": "https://balancer.fi",
+        "twitter": "https://twitter.com/Balancer",
+        "coingeckoId": "balancer",
+        "description": "Balancer (BAL) is the governance token for the Balancer protocol, an automated portfolio manager and decentralized exchange."
+      }
+    },
+    "0x0bc529c00c6401aef6d220be8c6ea1667f6ad93e": {
+      "symbol": "YFI",
+      "name": "yearn.finance",
+      "decimals": 18,
+      "totalSupply": "36666000000000000000000",
+      "metadata": {
+        "address": "0x0bc529c00c6401aef6d220be8c6ea1667f6ad93e",
+        "name": "yearn.finance",
+        "symbol": "YFI",
+        "decimals": 18,
+        "chainId": 1,
+        "logoURI": "https://tokens.1inch.io/0x0bc529c00c6401aef6d220be8c6ea1667f6ad93e.png",
+        "website": "https://yearn.fi",
+        "twitter": "https://twitter.com/iearnfinance",
+        "coingeckoId": "yearn-finance",
+        "description": "yearn.finance (YFI) is a governance token for the Yearn ecosystem, which optimizes yield farming strategies across multiple protocols."
+      }
+    },
+    "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2": {
+      "symbol": "MKR",
+      "name": "Maker",
+      "decimals": 18,
+      "totalSupply": "1000000000000000000000000",
+      "metadata": {
+        "address": "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2",
+        "name": "Maker",
+        "symbol": "MKR",
+        "decimals": 18,
+        "chainId": 1,
+        "logoURI": "https://tokens.1inch.io/0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2.png",
+        "website": "https://makerdao.com",
+        "twitter": "https://twitter.com/MakerDAO",
+        "coingeckoId": "maker",
+        "description": "Maker (MKR) is the governance token for the MakerDAO protocol, which manages the DAI stablecoin system."
+      }
+    },
+    "0x": {
+      "symbol": "USDT",
+      "name": "Tether USD",
+      "decimals": 6,
+      "totalSupply": "83200000000000000",
+      "metadata": {
+        "address": "0x",
+        "name": "Tether USD",
+        "symbol": "USDT",
+        "decimals": 6,
+        "chainId": 1,
+        "logoURI": "https://tokens.1inch.io/0xdac17f958d2ee523a2206206994597c13d831ec7.png",
+        "logoURIs": {
+          "small": "https://assets.coingecko.com/coins/images/325/small/Tether.png",
+          "large": "https://assets.coingecko.com/coins/images/325/large/Tether.png"
+        },
+        "tags": [
+          "stablecoin",
+          "peg:usd",
+          "popular",
+          "defi"
+        ],
+        "website": "https://tether.to",
+        "whitepaper": "https://tether.to/wp-content/uploads/2016/06/TetherWhitePaper.pdf",
+        "explorer": "https://etherscan.io/token/0x",
+        "github": "https://github.com/tether",
+        "twitter": "https://twitter.com/Tether_to",
+        "telegram": "https://t.me/tether_to",
+        "discord": "https://discord.gg/tether",
+        "reddit": "https://reddit.com/r/tether",
+        "medium": "https://medium.com/tether",
+        "coingeckoId": "tether",
+        "coinmarketcapId": "tether",
+        "description": "Tether (USDT) is a stablecoin pegged to the US dollar. It is the most widely used stablecoin in the cryptocurrency ecosystem, providing stability and liquidity for traders and investors.",
+        "totalSupply": 83200000000,
+        "circulatingSupply": 83200000000,
+        "maxSupply": null,
+        "marketCap": 83200000000,
+        "volume24h": 50000000000,
+        "allTimeHigh": 1.22,
+        "allTimeLow": 0.57,
+        "launchDate": "2014-10-06",
+        "audits": [
+          {
+            "auditor": "Moore Cayman",
+            "date": "2024-01-31",
+            "report": "https://tether.to/wp-content/uploads/2024/02/Tether_Consolidated_Reserves_Report_January_2024.pdf"
+          },
+          {
+            "auditor": "BDO Italia",
+            "date": "2024-02-29",
+            "report": "https://tether.to/wp-content/uploads/2024/03/Tether_Assurance_Report_February_2024.pdf"
+          }
+        ],
+        "issuer": "Tether Limited",
+        "issuerCountry": "British Virgin Islands",
+        "regulation": "Not regulated as a security",
+        "pegMechanism": "Fiat-backed",
+        "reserves": "Cash, cash equivalents, and other assets",
+        "reservesBreakdown": {
+          "cashAndBankDeposits": "15.8%",
+          "treasuryBills": "60.2%",
+          "moneyMarketFunds": "14.5%",
+          "otherInvestments": "9.5%"
+        },
+        "contracts": {
+          "ethereum": "0x",
+          "tron": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+          "bsc": "0x55d398326f99059ff775485246999027b3197955",
+          "polygon": "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
+          "avalanche": "0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7",
+          "arbitrum": "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
+          "optimism": "0x94b008aa00579c1307b0ef2c499ad98a8ce58e58",
+          "fantom": "0x049d68029688eabf473097a2fc38ef61633a3c7a"
+        }
+      }
+    },
+    "0xca11bde05977b3631167028862be2a173976ca11": {
+      "symbol": "UNKNOWN",
+      "name": "Unknown Contract",
+      "decimals": 18,
+      "totalSupply": "0",
+      "metadata": {}
+    },
+    "0x4fef9d741011476750a243ac70b9789a63dd47df": {
+      "symbol": "UNKNOWN",
+      "name": "Unknown Contract",
+      "decimals": 18,
+      "totalSupply": "0",
+      "metadata": {}
+    },
+    "0x68e3df274e7d0beee71f0da49bf23526fc89aae0": {
+      "symbol": "USDT",
+      "name": "Tether USD",
+      "decimals": 6,
+      "totalSupply": "83200000000000000",
+      "metadata": {
+        "address": "0x68e3df274e7d0beee71f0da49bf23526fc89aae0",
+        "name": "Tether USD",
+        "symbol": "USDT",
+        "decimals": 6,
+        "chainId": 1,
+        "logoURI": "https://tokens.1inch.io/0xdac17f958d2ee523a2206206994597c13d831ec7.png",
+        "logoURIs": {
+          "small": "https://assets.coingecko.com/coins/images/325/small/Tether.png",
+          "large": "https://assets.coingecko.com/coins/images/325/large/Tether.png"
+        },
+        "tags": [
+          "stablecoin",
+          "peg:usd",
+          "popular",
+          "defi"
+        ],
+        "website": "https://tether.to",
+        "whitepaper": "https://tether.to/wp-content/uploads/2016/06/TetherWhitePaper.pdf",
+        "explorer": "https://etherscan.io/token/0x68e3df274e7d0beee71f0da49bf23526fc89aae0",
+        "github": "https://github.com/tether",
+        "twitter": "https://twitter.com/Tether_to",
+        "telegram": "https://t.me/tether_to",
+        "discord": "https://discord.gg/tether",
+        "reddit": "https://reddit.com/r/tether",
+        "medium": "https://medium.com/tether",
+        "coingeckoId": "tether",
+        "coinmarketcapId": "tether",
+        "description": "Tether (USDT) is a stablecoin pegged to the US dollar. It is the most widely used stablecoin in the cryptocurrency ecosystem, providing stability and liquidity for traders and investors.",
+        "totalSupply": 83200000000,
+        "circulatingSupply": 83200000000,
+        "maxSupply": null,
+        "marketCap": 83200000000,
+        "volume24h": 50000000000,
+        "allTimeHigh": 1.22,
+        "allTimeLow": 0.57,
+        "launchDate": "2014-10-06",
+        "audits": [
+          {
+            "auditor": "Moore Cayman",
+            "date": "2024-01-31",
+            "report": "https://tether.to/wp-content/uploads/2024/02/Tether_Consolidated_Reserves_Report_January_2024.pdf"
+          },
+          {
+            "auditor": "BDO Italia",
+            "date": "2024-02-29",
+            "report": "https://tether.to/wp-content/uploads/2024/03/Tether_Assurance_Report_February_2024.pdf"
+          }
+        ],
+        "issuer": "Tether Limited",
+        "issuerCountry": "British Virgin Islands",
+        "regulation": "Not regulated as a security",
+        "pegMechanism": "Fiat-backed",
+        "reserves": "Cash, cash equivalents, and other assets",
+        "reservesBreakdown": {
+          "cashAndBankDeposits": "15.8%",
+          "treasuryBills": "60.2%",
+          "moneyMarketFunds": "14.5%",
+          "otherInvestments": "9.5%"
+        },
+        "contracts": {
+          "ethereum": "0x68e3df274e7d0beee71f0da49bf23526fc89aae0",
+          "tron": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+          "bsc": "0x55d398326f99059ff775485246999027b3197955",
+          "polygon": "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
+          "avalanche": "0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7",
+          "arbitrum": "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
+          "optimism": "0x94b008aa00579c1307b0ef2c499ad98a8ce58e58",
+          "fantom": "0x049d68029688eabf473097a2fc38ef61633a3c7a"
+        }
+      }
+    }
+  },
+  "blocks": [
+    {
+      "number": 0,
+      "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "timestamp": 1672531200,
+      "transactions": []
+    }
+  ],
+  "transactions": {},
+  "pendingTransactions": {}
+}
