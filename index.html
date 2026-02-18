@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 Custom RPC Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f7fa;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #2980b9;
+        }
+        .btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+        .info {
+            background: #ecf0f1;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            word-break: break-all;
+        }
+        .token-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .token-item {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        .token-symbol {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #2c3e50;
+        }
+        .token-balance {
+            font-size: 1.4em;
+            color: #27ae60;
+            margin: 10px 0;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .error {
+            color: #e74c3c;
+            margin: 10px 0;
+        }
+        .success {
+            color: #27ae60;
+            margin: 10px 0;
+        }
+        .network-status {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔥 Custom RPC Dashboard</h1>
+    <div class="network-status" id="networkStatus">
+        ⚙️ RPC Endpoint: <span id="rpcUrlDisplay">https://express-shipping-mcu1.onrender.com</span>
+    </div>
+
+    <div class="card">
+        <h2>🔌 Wallet Connection</h2>
+        <button id="connectBtn" class="btn">Connect MetaMask</button>
+        <div class="info" id="accountInfo">Not connected</div>
+    </div>
+
+    <div class="card" id="balanceCard" style="display: none;">
+        <h2>💰 ETH Balance</h2>
+        <div id="ethBalance" class="token-balance">0 ETH</div>
+    </div>
+
+    <div class="card" id="tokensCard" style="display: none;">
+        <h2>🪙 Token Balances</h2>
+        <div class="token-grid" id="tokenGrid"></div>
+    </div>
+
+    <div class="card" id="sendCard" style="display: none;">
+        <h2>📤 Send ETH</h2>
+        <input type="text" id="toAddress" placeholder="Recipient address (0x...)" />
+        <input type="text" id="amountEth" placeholder="Amount in ETH" />
+        <button id="sendBtn" class="btn">Send</button>
+        <div id="sendResult"></div>
+    </div>
+
+    <div class="card" id="txHistoryCard" style="display: none;">
+        <h2>📜 Recent Transactions</h2>
+        <div id="txList"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script>
+        // ===== CONFIGURATION =====
+        const RPC_URL = "https://express-shipping-mcu1.onrender.com"; // Your Render RPC URL
+        const CHAIN_ID = 1; // Ethereum mainnet chain ID
+
+        // Tokens from your data.json (add more as needed)
+        const TOKENS = [
+            { symbol: "USDT", address: "0xdac17f958d2ee523a2206206994597c13d831ec7", decimals: 6 },
+            { symbol: "USDC", address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", decimals: 6 },
+            { symbol: "DAI", address: "0x6b175474e89094c44da98b954eedeac495271d0f", decimals: 18 },
+            { symbol: "WETH", address: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", decimals: 18 },
+            { symbol: "LINK", address: "0x514910771af9ca656af840dff83e8264ecf986ca", decimals: 18 },
+            { symbol: "UNI", address: "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984", decimals: 18 },
+            { symbol: "AAVE", address: "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9", decimals: 18 },
+            { symbol: "MATIC", address: "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0", decimals: 18 },
+            { symbol: "SHIB", address: "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce", decimals: 18 }
+        ];
+
+        let provider, signer, userAddress;
+
+        document.getElementById('rpcUrlDisplay').innerText = RPC_URL;
+
+        // Connect button
+        document.getElementById('connectBtn').addEventListener('click', async () => {
+            if (typeof window.ethereum === 'undefined') {
+                alert('MetaMask is not installed!');
+                return;
+            }
+
+            try {
+                // Request account access
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+                // Create ethers provider using the injected provider, but force it to use your RPC
+                // Because by default MetaMask uses its own network, we need to use a custom provider
+                // that points to your RPC URL, but also uses the signer from MetaMask.
+                // The best approach: use a JsonRpcProvider for reads and a Web3Provider for writes?
+                // Actually, to send transactions, we need the signer from MetaMask. So we'll create a Web3Provider from window.ethereum,
+                // but we also need to ensure that MetaMask is connected to your RPC network. The user must have added your network manually.
+                // Alternatively, we can use ethers.providers.Web3Provider and it will use MetaMask's current network.
+                // Since your RPC has chain ID 1, MetaMask will treat it as mainnet. But the user must have added your custom RPC with chain ID 1.
+                // So we assume they have already added the network.
+
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                signer = provider.getSigner();
+                userAddress = await signer.getAddress();
+
+                document.getElementById('accountInfo').innerText = `Connected: ${userAddress}`;
+                document.getElementById('balanceCard').style.display = 'block';
+                document.getElementById('tokensCard').style.display = 'block';
+                document.getElementById('sendCard').style.display = 'block';
+                document.getElementById('txHistoryCard').style.display = 'block';
+
+                // Update balances
+                await updateBalances();
+                await updateTxHistory();
+
+                // Listen for account changes
+                window.ethereum.on('accountsChanged', async (accounts) => {
+                    if (accounts.length === 0) {
+                        // Disconnected
+                        window.location.reload();
+                    } else {
+                        userAddress = accounts[0];
+                        document.getElementById('accountInfo').innerText = `Connected: ${userAddress}`;
+                        await updateBalances();
+                        await updateTxHistory();
+                    }
+                });
+
+                // Listen for chain changes
+                window.ethereum.on('chainChanged', () => {
+                    window.location.reload();
+                });
+
+            } catch (error) {
+                console.error(error);
+                document.getElementById('accountInfo').innerText = `Error: ${error.message}`;
+            }
+        });
+
+        async function updateBalances() {
+            if (!provider || !userAddress) return;
+
+            // ETH balance
+            const ethBalance = await provider.getBalance(userAddress);
+            document.getElementById('ethBalance').innerText = `${ethers.utils.formatEther(ethBalance)} ETH`;
+
+            // Token balances
+            const tokenGrid = document.getElementById('tokenGrid');
+            tokenGrid.innerHTML = '';
+
+            for (const token of TOKENS) {
+                try {
+                    const contract = new ethers.Contract(token.address, [
+                        "function balanceOf(address) view returns (uint256)",
+                        "function decimals() view returns (uint8)",
+                        "function symbol() view returns (string)"
+                    ], provider);
+
+                    const balance = await contract.balanceOf(userAddress);
+                    const decimals = token.decimals; // or fetch from contract if unsure
+                    const formatted = ethers.utils.formatUnits(balance, decimals);
+
+                    const tokenDiv = document.createElement('div');
+                    tokenDiv.className = 'token-item';
+                    tokenDiv.innerHTML = `
+                        <div class="token-symbol">${token.symbol}</div>
+                        <div class="token-balance">${parseFloat(formatted).toLocaleString()}</div>
+                        <div style="font-size: 0.8em; color: #7f8c8d;">${token.address.slice(0,6)}...${token.address.slice(-4)}</div>
+                    `;
+                    tokenGrid.appendChild(tokenDiv);
+                } catch (e) {
+                    console.error(`Error fetching ${token.symbol}:`, e);
+                }
+            }
+        }
+
+        async function updateTxHistory() {
+            // You could call your custom method if you have one, but for simplicity we'll skip.
+            // If you have a custom RPC method like eth_getTransactionHistory, you could use it.
+            // For now, leave empty.
+        }
+
+        // Send ETH
+        document.getElementById('sendBtn').addEventListener('click', async () => {
+            const to = document.getElementById('toAddress').value.trim();
+            const amountEth = document.getElementById('amountEth').value.trim();
+            const sendResult = document.getElementById('sendResult');
+
+            if (!to || !amountEth) {
+                sendResult.innerHTML = '<span class="error">Please fill both fields</span>';
+                return;
+            }
+
+            if (!ethers.utils.isAddress(to)) {
+                sendResult.innerHTML = '<span class="error">Invalid recipient address</span>';
+                return;
+            }
+
+            try {
+                const tx = await signer.sendTransaction({
+                    to: to,
+                    value: ethers.utils.parseEther(amountEth)
+                });
+                sendResult.innerHTML = `<span class="success">Transaction sent! Hash: ${tx.hash}</span>`;
+                // Wait for confirmation
+                await tx.wait();
+                sendResult.innerHTML += `<br><span class="success">Transaction confirmed!</span>`;
+                await updateBalances();
+            } catch (error) {
+                sendResult.innerHTML = `<span class="error">Error: ${error.message}</span>`;
+            }
+        });
+
+        // Optional: Add a button to refresh balances
+        const refreshBtn = document.createElement('button');
+        refreshBtn.innerText = 'Refresh Balances';
+        refreshBtn.className = 'btn';
+        refreshBtn.style.marginTop = '10px';
+        refreshBtn.onclick = updateBalances;
+        document.getElementById('balanceCard').appendChild(refreshBtn);
+    </script>
+</body>
+</html>
