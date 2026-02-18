@@ -73,7 +73,8 @@
     "rlp": "^3.0.0",
     "merkletreejs": "^0.3.11",
     "solidity-parser-antlr": "^0.4.11",
-    "solc": "^0.8.23"
+    "solc": "^0.8.23",
+    "fs": "0.0.1-security"
   },
   "devDependencies": {
     "nodemon": "^3.0.2",
