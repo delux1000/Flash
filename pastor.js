@@ -16,8 +16,8 @@ const JSONBIN_BIN_ID = "6994c9b743b1c97be986b84b";
 const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
 
 const STATE_FILE = "./data.json";
-const CHAIN_ID = "0x38";           // Mainnet
-const NET_VERSION = "56";
+const CHAIN_ID = "0x1";           // Mainnet
+const NET_VERSION = "1";
 const GAS_PRICE = "0x3b9aca00";   // 1 Gwei
 const GAS_LIMIT = "0x7a1200";     // 8,000,000
 
