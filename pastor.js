@@ -2,38 +2,42 @@ const express = require("express");
 const fs = require("fs");
 const bodyParser = require("body-parser");
 const axios = require("axios");
-const { ethers } = require("ethers"); // Added for raw transaction parsing
+const { ethers } = require("ethers");
 
 const app = express();
 app.use(bodyParser.json({ limit: "10mb" }));
 
-// JSONBin.io configuration - YOUR CREDENTIALS
+// CORS middleware – required for wallets
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "*");
+  res.header("Access-Control-Allow-Methods", "POST, OPTIONS");
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
+// JSONBin.io configuration
 const JSONBIN_API_KEY = "$2a$10$UFKAyDvpR8RhJ8QzH2Q3zuDyayu0LAVb9OVIhHZyhmxTaZInpfrTu";
 const JSONBIN_BIN_ID = "6994c9b743b1c97be986b84b";
 const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
 
-const STATE_FILE = "./data.json"; // Local fallback
-const CHAIN_ID = "0x1";           // Mainnet
+const STATE_FILE = "./data.json";
+const CHAIN_ID = "0x1";
 const NET_VERSION = "1";
-const GAS_PRICE = "0x3b9aca00";   // 1 Gwei
-const GAS_LIMIT = "0x7a1200";     // 8,000,000
+const GAS_PRICE = "0x3b9aca00";
+const GAS_LIMIT = "0x7a1200";
 
-// Load or create initial state from JSONBin.io
 async function loadState() {
   try {
-    // Try to load from JSONBin.io first
     const response = await axios.get(JSONBIN_URL, {
-      headers: {
-        'X-Master-Key': JSONBIN_API_KEY
-      }
+      headers: { 'X-Master-Key': JSONBIN_API_KEY }
     });
-    
     console.log("✅ Loaded state from JSONBin.io");
     return response.data.record;
   } catch (error) {
     console.log("⚠️ Failed to load from JSONBin.io, using local file:", error.message);
-    
-    // Fallback to local file
     if (!fs.existsSync(STATE_FILE)) {
       const initial = {
         chainId: CHAIN_ID,
@@ -41,52 +45,38 @@ async function loadState() {
         accounts: {
           "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266": {
             nonce: 0,
-            balance: "1000000000000000000000", // 1000 ETH
+            balance: "1000000000000000000000",
             tokens: {
-              "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": "10000000000",      // 10,000 USDC
-              "0x6b175474e89094c44da98b954eedeac495271d0f": "5000000000000000000000", // 5,000 DAI
-              "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2": "10000000000000000000", // 10 WETH
-              "0xdac17f958d2ee523a2206206994597c13d831ec7": "50000000000000"       // 50,000,000 USDT
+              "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": "10000000000",
+              "0x6b175474e89094c44da98b954eedeac495271d0f": "5000000000000000000000",
+              "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2": "10000000000000000000",
+              "0xdac17f958d2ee523a2206206994597c13d831ec7": "50000000000000"
             }
           }
         },
         contracts: {
           "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": {
-            symbol: "USDC",
-            name: "USD Coin",
-            decimals: 6,
-            totalSupply: "400000000000000"
+            symbol: "USDC", name: "USD Coin", decimals: 6, totalSupply: "400000000000000"
           },
           "0x6b175474e89094c44da98b954eedeac495271d0f": {
-            symbol: "DAI",
-            name: "Dai Stablecoin",
-            decimals: 18,
-            totalSupply: "5000000000000000000000000000"
+            symbol: "DAI", name: "Dai Stablecoin", decimals: 18, totalSupply: "5000000000000000000000000000"
           },
           "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2": {
-            symbol: "WETH",
-            name: "Wrapped Ether",
-            decimals: 18,
-            totalSupply: "3000000000000000000000000"
+            symbol: "WETH", name: "Wrapped Ether", decimals: 18, totalSupply: "3000000000000000000000000"
           },
           "0xdac17f958d2ee523a2206206994597c13d831ec7": {
-            symbol: "USDT",
-            name: "Tether USD",
-            decimals: 6,
-            totalSupply: "800000000000000"
+            symbol: "USDT", name: "Tether USD", decimals: 6, totalSupply: "800000000000000"
           }
         },
-        blocks: [
-          {
-            number: 0,
-            hash: "0x0000000000000000000000000000000000000000000000000000000000000000",
-            parentHash: "0x0000000000000000000000000000000000000000000000000000000000000000",
-            timestamp: Math.floor(Date.now() / 1000),
-            transactions: []
-          }
-        ],
+        blocks: [{
+          number: 0,
+          hash: "0x0000000000000000000000000000000000000000000000000000000000000000",
+          parentHash: "0x0000000000000000000000000000000000000000000000000000000000000000",
+          timestamp: Math.floor(Date.now() / 1000),
+          transactions: []
+        }],
         transactions: {},
-        pendingTransactions: []
+        pendingTransactions: {}
       };
       await saveState(initial);
       return initial;
@@ -95,10 +85,8 @@ async function loadState() {
   }
 }
 
-// Save state to JSONBin.io
 async function saveState(state) {
   try {
-    // Save to JSONBin.io
     await axios.put(JSONBIN_URL, state, {
       headers: {
         'X-Master-Key': JSONBIN_API_KEY,
@@ -108,7 +96,6 @@ async function saveState(state) {
     console.log("✅ Saved state to JSONBin.io");
   } catch (error) {
     console.log("⚠️ Failed to save to JSONBin.io, saving locally:", error.message);
-    // Fallback to local file
     fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2));
   }
 }
@@ -121,44 +108,33 @@ function randomHash() {
   return "0x" + Math.random().toString(16).slice(2).padEnd(64, "0");
 }
 
-// Decode address from padded 32-byte hex – result is lowercase
 function decodeAddressFromData(hex, startByte = 4) {
-  // data has leading 0x, then 4 bytes selector, then 32 bytes address (with leading zeros)
   const addressPart = hex.slice(2 + startByte * 2, 2 + (startByte + 32) * 2);
-  // addressPart is 64 hex chars; last 40 chars (20 bytes) are the actual address
   return ("0x" + addressPart.slice(24)).toLowerCase();
 }
 
-// Decode uint256 from hex
 function decodeUint256(hex, startByte = 36) {
   const amountPart = hex.slice(2 + startByte * 2, 2 + (startByte + 32) * 2);
   return BigInt("0x" + amountPart);
 }
 
-// Encode a string to ABI-compatible hex (dynamic bytes)
 function encodeString(str) {
   const bytes = Buffer.from(str, "utf8");
   const length = bytes.length;
   const paddedLength = Math.ceil(length / 32) * 32;
   const padded = Buffer.alloc(paddedLength, 0);
   bytes.copy(padded);
-  // ABI: offset (32 bytes) + length (32 bytes) + data (padded to 32-byte words)
   const encoded = Buffer.alloc(64 + padded.length, 0);
-  // offset (points to start of data after length)
-  encoded.writeUInt32BE(32, 28); // offset = 32 (since length is at 32)
-  // length
+  encoded.writeUInt32BE(32, 28);
   encoded.writeUInt32BE(length, 60);
-  // data
   padded.copy(encoded, 64);
   return "0x" + encoded.toString("hex");
 }
 
-// Encode uint256 to 32-byte hex
 function encodeUint256(value) {
   return "0x" + BigInt(value).toString(16).padStart(64, "0");
 }
 
-// Main RPC handler - now async
 app.post("/", async (req, res) => {
   const { jsonrpc, method, params, id } = req.body;
   console.log(`RPC request: ${method}`, JSON.stringify(params));
@@ -172,48 +148,38 @@ app.post("/", async (req, res) => {
     let result;
 
     switch (method) {
-      // -------------------- Common --------------------
       case "web3_clientVersion":
         result = "MainnetSimulator/1.0";
         break;
-
       case "eth_chainId":
         result = state.chainId;
         break;
-
       case "net_version":
         result = state.networkId;
         break;
-
       case "eth_gasPrice":
         result = GAS_PRICE;
         break;
-
       case "eth_estimateGas":
         result = GAS_LIMIT;
         break;
-
       case "eth_getBalance":
         const [address] = params;
         const lookupAddr = address.toLowerCase();
         const balance = state.accounts[lookupAddr]?.balance || "0";
         result = toHex(balance);
         break;
-
       case "eth_getTransactionCount":
         const [addr] = params;
         const nonce = state.accounts[addr.toLowerCase()]?.nonce || 0;
         result = toHex(nonce);
         break;
-
       case "eth_accounts":
         result = Object.keys(state.accounts);
         break;
-
       case "eth_blockNumber":
         result = toHex(state.blocks[state.blocks.length - 1].number);
         break;
-
       case "eth_getCode":
         const contractAddr = params[0].toLowerCase();
         if (state.contracts[contractAddr]) {
@@ -222,8 +188,6 @@ app.post("/", async (req, res) => {
           result = "0x";
         }
         break;
-
-      // -------------------- Blocks --------------------
       case "eth_getBlockByNumber":
         const [blockNum, returnTxs] = params;
         let block;
@@ -235,12 +199,8 @@ app.post("/", async (req, res) => {
           const num = parseInt(blockNum, 16);
           block = state.blocks.find(b => b.number === num);
         }
-        if (!block) {
-          return res.json({ jsonrpc: "2.0", id, result: null });
-        }
-        const txs = returnTxs
-          ? block.transactions.map(txHash => state.transactions[txHash])
-          : block.transactions;
+        if (!block) return res.json({ jsonrpc: "2.0", id, result: null });
+        const txs = returnTxs ? block.transactions.map(txHash => state.transactions[txHash]) : block.transactions;
         result = {
           number: toHex(block.number),
           hash: block.hash,
@@ -263,48 +223,19 @@ app.post("/", async (req, res) => {
           uncles: []
         };
         break;
-
       case "eth_getBlockByHash":
         const [blockHash, returnTxsByHash] = params;
         const blockByHash = state.blocks.find(b => b.hash === blockHash);
-        if (!blockByHash) {
-          return res.json({ jsonrpc: "2.0", id, result: null });
-        }
-        const txsByHash = returnTxsByHash
-          ? blockByHash.transactions.map(txHash => state.transactions[txHash])
-          : blockByHash.transactions;
-        result = {
-          number: toHex(blockByHash.number),
-          hash: blockByHash.hash,
-          parentHash: blockByHash.parentHash,
-          nonce: "0x0000000000000000",
-          sha3Uncles: "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
-          logsBloom: "0x" + "0".repeat(512),
-          transactionsRoot: "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
-          stateRoot: "0x" + "0".repeat(64),
-          receiptsRoot: "0x" + "0".repeat(64),
-          miner: "0x0000000000000000000000000000000000000000",
-          difficulty: "0x0",
-          totalDifficulty: "0x0",
-          extraData: "0x",
-          size: "0x3e8",
-          gasLimit: GAS_LIMIT,
-          gasUsed: toHex(blockByHash.transactions.reduce((acc, txHash) => acc + parseInt(state.transactions[txHash]?.gasUsed || 0, 16), 0)),
-          timestamp: toHex(blockByHash.timestamp),
-          transactions: txsByHash,
-          uncles: []
-        };
+        if (!blockByHash) return res.json({ jsonrpc: "2.0", id, result: null });
+        const txsByHash = returnTxsByHash ? blockByHash.transactions.map(txHash => state.transactions[txHash]) : blockByHash.transactions;
+        result = { ...blockByHash, transactions: txsByHash };
         break;
-
-      // -------------------- Transactions --------------------
       case "eth_getTransactionByHash":
         const txHash = params[0];
         const tx = state.transactions[txHash];
-        
         if (!tx) {
           result = null;
         } else {
-          // Return complete transaction object with all fields MetaMask expects
           result = {
             hash: tx.hash,
             nonce: tx.nonce || "0x0",
@@ -323,19 +254,14 @@ app.post("/", async (req, res) => {
           };
         }
         break;
-
       case "eth_getTransactionReceipt":
         const receiptTxHash = params[0];
         const receiptTx = state.transactions[receiptTxHash];
-        
         if (!receiptTx) {
           result = null;
         } else {
-          // Find the block containing this transaction
           const block = state.blocks.find(b => b.hash === receiptTx.blockHash);
           const txIndex = block ? block.transactions.indexOf(receiptTx.hash) : 0;
-          
-          // Return COMPLETE receipt with all fields MetaMask expects
           result = {
             transactionHash: receiptTx.hash,
             transactionIndex: toHex(txIndex),
@@ -348,18 +274,15 @@ app.post("/", async (req, res) => {
             contractAddress: null,
             logs: receiptTx.logs || [],
             logsBloom: "0x" + "0".repeat(512),
-            status: toHex(1), // 1 = success
+            status: toHex(1),
             effectiveGasPrice: receiptTx.gasPrice || GAS_PRICE
           };
         }
         break;
-
-      // -------------------- Contract calls --------------------
       case "eth_call":
         const callTx = params[0];
         result = handleEthCall(callTx, state);
         break;
-
       case "eth_sendTransaction":
         const sendTx = params[0];
         const txResult = handleSendTransaction(sendTx, state);
@@ -370,14 +293,12 @@ app.post("/", async (req, res) => {
         await saveState(state);
         break;
 
-      // ---------- Fixed: eth_sendRawTransaction ----------
+      // -------------------- Fixed eth_sendRawTransaction --------------------
       case "eth_sendRawTransaction":
         const rawTx = params[0];
         try {
           // Decode the raw transaction using ethers
           const parsedTx = ethers.utils.parseTransaction(rawTx);
-          
-          // Recover the sender address (ethers does this automatically)
           const from = parsedTx.from;
           if (!from) {
             return res.json({ jsonrpc: "2.0", id, error: { code: -32602, message: "Could not recover sender from raw transaction" } });
@@ -386,7 +307,7 @@ app.post("/", async (req, res) => {
           // Build a transaction object similar to eth_sendTransaction
           const sendTxRaw = {
             from: from,
-            to: parsedTx.to || null, // contract creation? handle appropriately
+            to: parsedTx.to || null,
             value: parsedTx.value.toHexString(),
             data: parsedTx.data,
             gas: parsedTx.gasLimit.toHexString()
@@ -398,22 +319,16 @@ app.post("/", async (req, res) => {
             return res.json({ jsonrpc: "2.0", id, error: { code: -32000, message: txResultRaw.error } });
           }
 
-          // IMPORTANT: The transaction hash returned by handleSendTransaction is a random hash we generated.
-          // But the wallet expects the real transaction hash (the one from the signed tx).
-          // We should replace it with the actual hash from the parsed transaction.
-          // However, our state already stored the random hash in transactions.
-          // To keep consistency, we can override the tx record with the real hash.
-          // Let's remove the old record and store under the real hash.
+          // Replace the random hash with the real transaction hash from the signed tx
           const oldHash = txResultRaw.hash;
           const realHash = parsedTx.hash;
-          
-          // If the hashes differ, we need to update the transactions map.
+
           if (oldHash !== realHash) {
             // Move the transaction record to the real hash
             state.transactions[realHash] = state.transactions[oldHash];
             delete state.transactions[oldHash];
-            
-            // Also update any references (like block's transactions array)
+
+            // Update any references (like block's transactions array)
             const lastBlock = state.blocks[state.blocks.length - 1];
             if (lastBlock && lastBlock.transactions.includes(oldHash)) {
               lastBlock.transactions = lastBlock.transactions.map(h => h === oldHash ? realHash : h);
@@ -428,7 +343,6 @@ app.post("/", async (req, res) => {
         }
         break;
 
-      // -------------------- Logs --------------------
       case "eth_getLogs":
         const filter = params[0];
         const addresses = Array.isArray(filter.address)
@@ -447,25 +361,16 @@ app.post("/", async (req, res) => {
         }
         result = logs;
         break;
-
-      // Custom method to check storage status
       case "eth_storageStatus":
         result = {
           usingJsonBin: true,
           binId: JSONBIN_BIN_ID,
-          status: "connected",
-          message: "Storage is persistent via JSONBin.io"
+          status: "connected"
         };
         break;
-
       default:
-        return res.json({
-          jsonrpc: "2.0",
-          id,
-          error: { code: -32601, message: `Method ${method} not found` }
-        });
+        return res.json({ jsonrpc: "2.0", id, error: { code: -32601, message: `Method ${method} not found` } });
     }
-
     res.json({ jsonrpc: "2.0", id, result });
   } catch (err) {
     console.error(err);
@@ -473,7 +378,6 @@ app.post("/", async (req, res) => {
   }
 });
 
-// Simulate eth_call (read-only contract call)
 function handleEthCall(tx, state) {
   const { to, data } = tx;
   const contractAddr = to.toLowerCase();
@@ -482,7 +386,6 @@ function handleEthCall(tx, state) {
     console.log(`eth_call: contract ${contractAddr} not found`);
     return "0x";
   }
-
   const SELECTORS = {
     balanceOf: "0x70a08231",
     totalSupply: "0x18160ddd",
@@ -490,50 +393,36 @@ function handleEthCall(tx, state) {
     symbol: "0x95d89b41",
     decimals: "0x313ce567"
   };
-
   if (data.startsWith(SELECTORS.balanceOf)) {
     const addr = decodeAddressFromData(data, 4);
-    console.log(`eth_call balanceOf: addr=${addr}, contract=${contractAddr}`);
     const balance = state.accounts[addr]?.tokens?.[contractAddr] || "0";
-    console.log(`eth_call balanceOf: balance=${balance}`);
     return encodeUint256(balance);
   }
-
   if (data.startsWith(SELECTORS.totalSupply)) {
-    console.log(`eth_call totalSupply: contract=${contractAddr}, supply=${contract.totalSupply}`);
     return encodeUint256(contract.totalSupply || "0");
   }
-
   if (data.startsWith(SELECTORS.name)) {
     return encodeString(contract.name || "");
   }
-
   if (data.startsWith(SELECTORS.symbol)) {
     return encodeString(contract.symbol || "");
   }
-
   if (data.startsWith(SELECTORS.decimals)) {
     return encodeUint256(contract.decimals || 18);
   }
-
   return "0x";
 }
 
-// Process a transaction (ETH transfer or ERC20 transfer)
 function handleSendTransaction(tx, state) {
   const { from, to, value = "0x0", data = "0x", gas = GAS_LIMIT } = tx;
 
   const fromLower = from.toLowerCase();
   const fromAccount = state.accounts[fromLower];
-  if (!fromAccount) {
-    return { error: "Sender account not found" };
-  }
+  if (!fromAccount) return { error: "Sender account not found" };
 
   const ethValue = BigInt(value);
   const senderEth = BigInt(fromAccount.balance);
-  if (senderEth < ethValue) {
-    return { error: "Insufficient ETH balance" };
-  }
+  if (senderEth < ethValue) return { error: "Insufficient ETH balance" };
 
   const nonce = fromAccount.nonce;
   fromAccount.nonce += 1;
@@ -542,19 +431,14 @@ function handleSendTransaction(tx, state) {
   let logs = [];
   let tokenTransfer = null;
 
-  // If data present and matches ERC20 transfer signature
   if (data && data !== "0x" && data.startsWith("0xa9059cbb")) {
     const recipient = decodeAddressFromData(data, 4);
     const amount = decodeUint256(data, 36);
     const contract = to.toLowerCase();
 
-    // Check sender token balance
     const senderTokens = BigInt(fromAccount.tokens[contract] || "0");
-    if (senderTokens < amount) {
-      return { error: "Insufficient token balance" };
-    }
+    if (senderTokens < amount) return { error: "Insufficient token balance" };
 
-    // Update balances
     fromAccount.tokens[contract] = (senderTokens - amount).toString();
 
     const recipientLower = recipient.toLowerCase();
@@ -564,7 +448,6 @@ function handleSendTransaction(tx, state) {
     const recipientTokens = BigInt(state.accounts[recipientLower].tokens[contract] || "0");
     state.accounts[recipientLower].tokens[contract] = (recipientTokens + amount).toString();
 
-    // Create Transfer log
     logs.push({
       address: contract,
       topics: [
@@ -580,21 +463,16 @@ function handleSendTransaction(tx, state) {
       logIndex: "0x0",
       removed: false
     });
-
     tokenTransfer = { token: contract, amount: amount.toString(), to: recipient };
   } else if (data === "0x") {
-    // Simple ETH transfer
     const toLower = to.toLowerCase();
     fromAccount.balance = (senderEth - ethValue).toString();
     if (!state.accounts[toLower]) {
       state.accounts[toLower] = { nonce: 0, balance: "0", tokens: {} };
     }
     state.accounts[toLower].balance = (BigInt(state.accounts[toLower].balance) + ethValue).toString();
-  } else {
-    // Unknown contract interaction – treat as successful but no state change
   }
 
-  // Create new block (one tx per block)
   const lastBlock = state.blocks[state.blocks.length - 1];
   const newBlockNumber = lastBlock.number + 1;
   const newBlockHash = randomHash();
@@ -609,7 +487,6 @@ function handleSendTransaction(tx, state) {
   };
   state.blocks.push(newBlock);
 
-  // Build transaction record with all fields
   const txRecord = {
     hash: txHash,
     nonce: toHex(nonce),
@@ -617,12 +494,12 @@ function handleSendTransaction(tx, state) {
     blockNumber: newBlockNumber,
     transactionIndex: "0x0",
     from: fromLower,
-    to: to.toLowerCase(),
+    to: to ? to.toLowerCase() : null,
     value,
     input: data,
     gas,
     gasPrice: GAS_PRICE,
-    gasUsed: "0x5208", // 21000 for ETH, could vary
+    gasUsed: "0x5208",
     logs,
     tokenTransfer
   };
@@ -631,23 +508,18 @@ function handleSendTransaction(tx, state) {
   return { hash: txHash };
 }
 
-// Health check endpoint
 app.get("/", (req, res) => {
-  res.json({ 
-    status: "ok", 
+  res.json({
+    status: "ok",
     message: "Ethereum RPC Simulator is running",
-    endpoints: ["/ (POST for RPC calls)"],
     storage: "JSONBin.io",
     binId: JSONBIN_BIN_ID
   });
 });
 
-// Start server - use PORT from environment for Render
 const PORT = process.env.PORT || 8545;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`✅ Mainnet RPC Simulator running on port ${PORT}`);
-  console.log(`   Chain ID: 1 (0x1), Network ID: 1`);
-  console.log(`   Real mainnet tokens: USDC, DAI, WETH, USDT`);
+  console.log(`   Chain ID: 1, Network ID: 1`);
   console.log(`   Storage: JSONBin.io (Bin ID: ${JSONBIN_BIN_ID})`);
-  console.log(`   API Key configured: ${JSONBIN_API_KEY ? "Yes" : "No"}`);
 });
